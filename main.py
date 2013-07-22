@@ -1,5 +1,6 @@
 from pybonjourutil import *
 import thread
+import time
 
 
 username = raw_input("Username: ")
@@ -23,15 +24,22 @@ def fetch_servers():
 		
 		user[username] = [ip, port]
 	print user
+	
+	del user[username]
 
-fetch_servers()
 
 
 # Create two threads as follows
 try:
-   thread.start_new_thread(bonjourThread, (username, port, ) )
-except:
-   print "Error: unable to start thread"
+	running = True
+	thread.start_new_thread(bonjourThread, (username, port, ) )
+	while running:
+		fetch_servers()
+		time.sleep(10)
+except Exception as e:
+	print "Error: unable to start thread"
+	print e
+	
 
 while 1:
-   pass
+	pass

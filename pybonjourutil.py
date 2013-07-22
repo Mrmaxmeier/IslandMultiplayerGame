@@ -62,7 +62,7 @@ class ezCallback():
 		print '  fullname   =', fullname
 		print '  hosttarget =', hosttarget
 		print '  port	    =', port
-		print '  txtrecord  =', txtRecord
+		#xprint '  txtrecord  =', txtRecord
 	
 		self.resolvedData.append([fullname, hosttarget, port])
 

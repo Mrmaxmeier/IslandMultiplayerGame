@@ -37,9 +37,10 @@ class ezCallback():
 		self.resolved = []
 		self.timeout  = 5
 		self.queried  = []
+		self.silent = True
 
 	def register_callback(self, sdRef, flags, errorCode, name, regtype, domain):
-		if errorCode == pybonjour.kDNSServiceErr_NoError:
+		if errorCode == pybonjour.kDNSServiceErr_NoError and not self.silent:
 			print 'Registered service:'
 			print '  name	=', name
 			print '  regtype =', regtype
@@ -48,21 +49,23 @@ class ezCallback():
 	def query_record_callback(self, sdRef, flags, interfaceIndex, errorCode, fullname,
 							  rrtype, rrclass, rdata, ttl):
 		if errorCode == pybonjour.kDNSServiceErr_NoError:
-			print '  IP		 =', socket.inet_ntoa(rdata)
+			if not self.silent:
+				print '  IP		 =', socket.inet_ntoa(rdata)
 			self.resolvedData[-1].append(socket.inet_ntoa(rdata))
 			self.queried.append(True)
 
 
 	def resolve_callback(self, sdRef, flags, interfaceIndex, errorCode, fullname,
 						 hosttarget, port, txtRecord):
-		if errorCode != pybonjour.kDNSServiceErr_NoError:
+		if errorCode != pybonjour.kDNSServiceErr_NoError and not self.silent:
 			return
 
-		print 'Resolved service:'
-		print '  fullname   =', fullname
-		print '  hosttarget =', hosttarget
-		print '  port	    =', port
-		#xprint '  txtrecord  =', txtRecord
+		if not self.silent:
+			print 'Resolved service:'
+			print '  fullname   =', fullname
+			print '  hosttarget =', hosttarget
+			print '  port	    =', port
+			#print '  txtrecord  =', txtRecord
 	
 		self.resolvedData.append([fullname, hosttarget, port])
 
@@ -76,7 +79,8 @@ class ezCallback():
 			while not self.queried:
 				ready = select.select([query_sdRef], [], [], self.timeout)
 				if query_sdRef not in ready[0]:
-					print 'Query record timed out'
+					if not self.silent:
+						print 'Query record timed out'
 					break
 				pybonjour.DNSServiceProcessResult(query_sdRef)
 			else:
@@ -93,10 +97,12 @@ class ezCallback():
 			return
 
 		if not (flags & pybonjour.kDNSServiceFlagsAdd):
-			print 'Service removed'
+			if not self.silent:
+				print 'Service removed'
 			return
 
-		print 'Service added; resolving'
+		if not self.silent:
+			print 'Service added; resolving'
 	
 	
 
@@ -115,7 +121,8 @@ class ezCallback():
 			while not self.resolved:
 				ready = select.select([resolve_sdRef], [], [], self.timeout)
 				if resolve_sdRef not in ready[0]:
-					print 'Resolve timed out'
+					if not self.silent:
+						print 'Resolve timed out'
 					break
 				pybonjour.DNSServiceProcessResult(resolve_sdRef)
 			else:

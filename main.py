@@ -18,6 +18,7 @@ def bonjourThread(username, port):
 
 
 def fetch_servers():
+	user = {}
 	serverlist = list_current("_chat._tcp.")
 	#print serverlist
 	print
@@ -38,9 +39,12 @@ def fetch_servers():
 try:
 	running = True
 	thread.start_new_thread(bonjourThread, (username, port, ) )
+	time.sleep(2)
 	while running:
 		if mainThread == "fetch":
+			print
 			fetch_servers()
+			print
 		time.sleep(10)
 except Exception as e:
 	print "Error: unable to start thread"

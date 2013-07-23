@@ -4,7 +4,12 @@ import thread
 def handle(sock, addr):
 	print "connected to", addr
 	while 1:
-		print addr, ":", sock.recv(1024)
+		msg = sock.recv(1024)
+		if msg:
+			print addr, ":", msg
+		else:
+			print addr, "closed!"
+			return
 
 def serve(port, message):
 	try:

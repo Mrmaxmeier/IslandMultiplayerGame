@@ -2,7 +2,7 @@ from pybonjourutil import *
 import thread
 import time
 
-from testserver import serve
+from testserver import serve, testclient
 
 
 username = raw_input("Username: ")

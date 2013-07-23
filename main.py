@@ -8,6 +8,7 @@ from testserver import serve, testclient
 username = raw_input("Username: ")
 status = "Online"
 port = 1337
+serverport = 7331
 
 user = {}
 
@@ -20,7 +21,10 @@ def bonjourThread(username, port):
 
 
 def fetch_servers():
-	user = {}
+	for key in user.keys():
+		del user[key]
+	
+	
 	serverlist = list_current("_chat._tcp.")
 	#print serverlist
 	print
@@ -36,11 +40,28 @@ def fetch_servers():
 	print user
 
 
+def askforConn():
+	print
+	print "0: Pass"
+	c = 0
+	for name in user.keys():
+		c += 1
+		ip, port = user[name]
+		print str(c)+": "+name+" on "+ip+":"+str(serverport)
+	print
+	choice = int(raw_input("Connect to: "))-1
+	
+	
+	print
+	
+	
+	return user.keys()[choice]
+
 
 # Create two threads as follows
 try:
 	running = True
-	thread.start_new_thread(serve, (port+1, "Helllo, World!"))
+	thread.start_new_thread(serve, (serverport, "Helllo, World!"))
 	thread.start_new_thread(bonjourThread, (username, port, ) )
 	time.sleep(2)
 	while running:
@@ -49,6 +70,16 @@ try:
 			fetch_servers()
 			print
 		time.sleep(10)
+		if len(user) > 0:
+			running = False
+	
+	name = askforConn()
+	[ip, port] = user[name]
+	
+	print "Connecting to "+name+" on "+ip+":"+str(serverport)
+	
+	testclient((ip,serverport))
+	
 except Exception as e:
 	print "Error: unable to start thread"
 	print e

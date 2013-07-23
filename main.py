@@ -2,6 +2,8 @@ from pybonjourutil import *
 import thread
 import time
 
+from testserver import serve
+
 
 username = raw_input("Username: ")
 status = "Online"
@@ -38,6 +40,7 @@ def fetch_servers():
 # Create two threads as follows
 try:
 	running = True
+	thread.start_new_thread(serve, (port+1, "Helllo, World!"))
 	thread.start_new_thread(bonjourThread, (username, port, ) )
 	time.sleep(2)
 	while running:

@@ -19,13 +19,13 @@ def fetch_servers():
 	#print serverlist
 	print
 	for [type, name, port, ip] in serverlist:
-		username = type.split("._")[0]
-		print username+" on Host "+str(name)+" at "+str(ip)+":"+str(port)+" is avalible."
+		curusername = type.split("._")[0]
+		print curusername+" on Host "+str(name)+" at "+str(ip)+":"+str(port)+" is avalible."
 		
-		user[username] = [ip, port]
-	print user
+		user[str(curusername)] = [ip, port]
 	
 	del user[username]
+	print user
 
 
 

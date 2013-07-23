@@ -9,6 +9,8 @@ port = 1337
 
 user = {}
 
+mainThread == "fetch"
+
 
 def bonjourThread(username, port):
 	register(username,"_chat._tcp.",port)
@@ -23,8 +25,10 @@ def fetch_servers():
 		print curusername+" on Host "+str(name)+" at "+str(ip)+":"+str(port)+" is avalible."
 		
 		user[str(curusername)] = [ip, port]
-	
-	del user[username]
+	try:
+		del user[username]
+	except:
+		print "Fetched before registered."
 	print user
 
 
@@ -34,7 +38,8 @@ try:
 	running = True
 	thread.start_new_thread(bonjourThread, (username, port, ) )
 	while running:
-		fetch_servers()
+		if mainThread == "fetch":
+			fetch_servers()
 		time.sleep(10)
 except Exception as e:
 	print "Error: unable to start thread"

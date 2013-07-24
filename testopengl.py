@@ -3,7 +3,7 @@ from mainloop import *
 
 class Main(StdMain):
 	def __init__(self):
-		self.tex = Texture("../clojure/epic-space-adventure/src/assets/images/glass.png")
+		self.tex = Texture("./assets/textures/glass.png")
 	
 	def draw(self):
 		texpoly(self.tex, pygame.mouse.get_pos(), [(0,0), (400, 100), (600, 400), (200, 300)])

@@ -9,8 +9,12 @@ username = raw_input("Username: ")
 status = "Online"
 port = 1337
 serverport = 7331
+protocol = "_chat._tcp"
 
 user = {}
+
+
+DEBUG = True
 
 
 mainThread = "fetch"
@@ -63,6 +67,7 @@ try:
 	running = True
 	thread.start_new_thread(serve, (serverport, "Helllo, World!"))
 	thread.start_new_thread(bonjourThread, (username, port, ) )
+	thread.start_new_thread(scanner_handler, (protocol,))
 	time.sleep(2)
 	while running:
 		if mainThread == "fetch":
@@ -72,6 +77,19 @@ try:
 		time.sleep(10)
 		if len(user) > 0:
 			running = False
+	
+	curruserOld = "LOL"
+	
+	while DEBUG:
+		
+		if ezCallbackobj.currUser != curruserOld:
+			print
+			print ezCallbackobj.currUser
+		
+		if ezCallbackobj.userActions:
+			print ezCallbackobj.userActions[0]
+			ezCallbackobj.userActions.remove(ezCallbackobj.userActions[0])
+		curruserOld = ezCallbackobj.currUser
 	
 	name = askforConn()
 	[ip, port] = user[name]

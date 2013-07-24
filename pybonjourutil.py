@@ -38,6 +38,8 @@ class ezCallback():
 		self.timeout  = 5
 		self.queried  = []
 		self.silent = True
+		self.currUser = []
+		self.userActions = []
 
 	def register_callback(self, sdRef, flags, errorCode, name, regtype, domain):
 		if errorCode == pybonjour.kDNSServiceErr_NoError and not self.silent:
@@ -52,6 +54,8 @@ class ezCallback():
 			if not self.silent:
 				print '  IP		 =', socket.inet_ntoa(rdata)
 			self.resolvedData[-1].append(socket.inet_ntoa(rdata))
+			self.currUser[-1].append(socket.inet_ntoa(rdata))
+			
 			self.queried.append(True)
 
 
@@ -68,6 +72,9 @@ class ezCallback():
 			#print '  txtrecord  =', txtRecord
 	
 		self.resolvedData.append([fullname, hosttarget, port])
+		self.currUser.append([fullname, hosttarget, port])
+		self.userActions.append([fullname, "APPEARED"])
+		
 
 		query_sdRef = \
 		pybonjour.DNSServiceQueryRecord(interfaceIndex = interfaceIndex,
@@ -128,24 +135,28 @@ class ezCallback():
 			else:
 				self.resolved.pop()
 		finally:
+			self.currUserOLD = self.currUser
+			
 			resolve_sdRef.close()
 
 ezCallbackobj = ezCallback()
 
-def browse_resolve_query(regtype, timeout  = 5, queried  = [], resolved = []):
-	browse_sdRef = pybonjour.DNSServiceBrowse(regtype = regtype,
-		callBack = ezCallbackobj.browse_callback)
+def scanner_handler(regtype, timeout  = 5):
+	while True:
+		browse_sdRef = pybonjour.DNSServiceBrowse(regtype = regtype,
+			callBack = ezCallbackobj.browse_callback)
 
-	try:
 		try:
-			while True:
-				ready = select.select([browse_sdRef], [], [])
-				if browse_sdRef in ready[0]:
-					pybonjour.DNSServiceProcessResult(browse_sdRef)
-		except KeyboardInterrupt:
-			pass
-	finally:
-		browse_sdRef.close()
+			try:
+				while True:
+					ready = select.select([browse_sdRef], [], [])
+					if browse_sdRef in ready[0]:
+						pybonjour.DNSServiceProcessResult(browse_sdRef)
+			except KeyboardInterrupt:
+				pass
+		finally:
+			print "STOPPED HANDLER"
+			browse_sdRef.close()
 
 
 

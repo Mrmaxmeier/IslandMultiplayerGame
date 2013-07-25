@@ -4,14 +4,16 @@ from genIsland import *
 
 class Main(StdMain):
 	def __init__(self):
-		self.tex = Texture("./assets/textures/glass.png")
+		self.dirt = Texture("./assets/textures/dirt.png")
+		self.grass = Texture("./assets/textures/grass_overlay.png")
 		self.island = Island()
 	
 	def draw(self):
 		#texpoly(self.tex, pygame.mouse.get_pos(), [(0,0), (400, 100), (600, 400), (200, 300)])
-		texpoly(self.tex, pygame.mouse.get_pos(), self.island.wholePoly)
+		texpoly(self.dirt, pygame.mouse.get_pos(), self.island.wholePoly)
+		texpoly(self.grass, pygame.mouse.get_pos(), self.island.grassPoly)
 		circle(transparent(0.5, cyan), (300, 200), 200)
-		sprite(self.tex, (100,200))
+		sprite(self.dirt, (100,200))
 	def update(self, dt):
 		for event in pygame.event.get():
 			if event.type == QUIT:

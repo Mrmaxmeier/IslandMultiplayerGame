@@ -11,6 +11,8 @@ class Island():
 		self.polyWidth = 0
 		#self.rotate()
 		
+		self.grassPoly = []
+		
 		self.wholePoly = []
 		self.newWholePoly()
 		
@@ -48,6 +50,20 @@ class Island():
 	def cPoly(self):
 		cpoly = self.polyUpper
 		cpoly += reversed(self.polyLower)
+		
+		
+		lastX = cpoly[-1][0]
+		for i in cpoly:
+			if i[0] > lastX:
+				self.grassPoly.append([i[0],i[1]])
+			lastX = i[0]
+		
+		grassPolyUpper = self.grassPoly[:]
+		
+		for i in grassPolyUpper:
+			i = [i[0],i[1]-50]
+			self.grassPoly.append(i)
+		
 		return cpoly
 	
 	def newWholePoly(self):

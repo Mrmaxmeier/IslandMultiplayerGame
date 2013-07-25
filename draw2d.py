@@ -52,10 +52,43 @@ def texpoly(tex, (ox, oy), points, a=1):
 	setCol(transparent(a, white))
 	glEnable(GL_TEXTURE_2D)
 	glBindTexture(GL_TEXTURE_2D,tex.texID)
-	glBegin(GL_QUADS)
+	glBegin(GL_TRIANGLE_FAN)
 	for x, y in points:
 		dx, dy = 1.*(x-ox)/tex.w, 1.*(y-oy)/tex.h
 		glTexCoord2f(dx,dy)
 		glVertex2f(x, y)
 	glEnd()
 	glDisable(GL_TEXTURE_2D)
+
+def texquads(tex, (ox, oy), pointsa, pointsb, a=1):
+	setCol(transparent(a, white))
+	glEnable(GL_TEXTURE_2D)
+	glBindTexture(GL_TEXTURE_2D,tex.texID)
+	glBegin(GL_QUAD_STRIP)
+	points = [point
+		for pair in zip(pointsa, pointsb)
+		for point in pair]
+	for x, y in points:
+		dx, dy = 1.*(x-ox)/tex.w, 1.*(y-oy)/tex.h
+		glTexCoord2f(dx,dy)
+		glVertex2f(x, y)
+	glEnd()
+	glDisable(GL_TEXTURE_2D)
+
+
+def with_transform(transform, fun, *args, **kwd):
+	glPushMatrix()
+	transform()
+	fun(*args, **kwd)
+	glPopMatrix()
+
+def translated((x, y), fun, *args, **kwd):
+	f = lambda: glTranslatef(x, y, 0)
+	with_transform(f, fun, *args, **kwd)
+
+def rotated((x, y), a, fun, *args, **kwd):
+	def f():
+		glTranslatef(x, y, 0)
+		glRotatef(a, 0, 0, 1)
+		glTranslatef(-x, -y, 0)
+	with_transform(f, fun, *args, **kwd)

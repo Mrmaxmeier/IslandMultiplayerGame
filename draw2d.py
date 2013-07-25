@@ -109,3 +109,12 @@ def skewed((x, y), (sx, sy), fun, *args, **kwd):
 			       0,  0, 0, 1])
 		glTranslatef(-x, -y, 0)
 	with_transform(f, fun, *args, **kwd)
+
+def drawGrass(tex, ox, dy_o, dy1, dy2, points, a=1):
+	for (xa, ya), (xb, yb) in zip(points, points[1:]):
+		oy = dy_o + ya
+		y1 = ya + dy1
+		y2 = ya + dy2
+		skewy = (yb - ya) / float(xb - xa)
+		skewed((xa, 42), (0, skewy),
+			texpoly, tex, (ox, oy), [(xa, y1), (xb, y1), (xb, y2), (xa, y2)], a=a)

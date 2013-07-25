@@ -14,7 +14,8 @@ class Main(StdMain):
 		texpoly(self.dirt, pygame.mouse.get_pos(), self.island.wholePoly)
 		texpoly(self.grass, pygame.mouse.get_pos(), self.island.grassPoly)
 		texquads(self.dirt, pygame.mouse.get_pos(), [(100, 100), (300, 300), (500, 200)], [(100, 300), (300, 350), (500, 500)])
-		circle(transparent(0.5, cyan), (300, 200), 200)
+		skewed((300, 300), map(lambda c: (c-300)*0.01, pygame.mouse.get_pos()),
+			circle, transparent(0.5, cyan), (300, 300), 200)
 		translated(pygame.mouse.get_pos(),
 			rotated, (32,32), self.t*90,
 				sprite, self.dirt, (0,0))

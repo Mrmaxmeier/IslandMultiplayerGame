@@ -92,3 +92,20 @@ def rotated((x, y), a, fun, *args, **kwd):
 		glRotatef(a, 0, 0, 1)
 		glTranslatef(-x, -y, 0)
 	with_transform(f, fun, *args, **kwd)
+
+def scaled((x, y), (sx, sy), fun, *args, **kwd):
+	def f():
+		glTranslatef(x, y, 0)
+		glScalef(sx, sy, 1)
+		glTranslatef(-x, -y, 0)
+	with_transform(f, fun, *args, **kwd)
+
+def skewed((x, y), (sx, sy), fun, *args, **kwd):
+	def f():
+		glTranslatef(x, y, 0)
+		glMultMatrixf([1, sy, 0, 0,
+			       sx, 1, 0, 0,
+			       0,  0, 1, 0,
+			       0,  0, 0, 1])
+		glTranslatef(-x, -y, 0)
+	with_transform(f, fun, *args, **kwd)

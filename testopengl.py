@@ -1,6 +1,6 @@
 from draw2d import *
 from mainloop import *
-from genIsland import *
+from island import *
 
 class Main(StdMain):
 	def __init__(self):

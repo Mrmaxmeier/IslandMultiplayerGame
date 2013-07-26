@@ -25,8 +25,10 @@ class Main(StdMain):
 		
 		coords = (200,300)
 		
-		translated(coords, texquads, self.dirt, pygame.mouse.get_pos(), self.island.polyUpper, self.island.polyLower)
-		translated(coords, drawGrass, self.grass, 0, 0, -63, 0, self.island.grassLine)
+		def drawisland():
+			texquads(self.dirt, pygame.mouse.get_pos(), self.island.polyUpper, self.island.polyLower)
+			drawGrass(self.grass, 0, 0, -63, 0, self.island.grassLine)
+		translated(coords, rotated, (200, 0), 90*self.t, drawisland)
 	
 	def update(self, dt):
 		self.t += dt

@@ -2,6 +2,14 @@ import random
 
 class Island():
 	def __init__(self):
+		self.clearData()
+		
+		self.wholePoly = []
+		self.newWholePoly()
+	
+	
+	def clearData(self):
+		
 		self.polyUpper = []
 		self.polyLower = []
 		
@@ -9,13 +17,13 @@ class Island():
 		
 		self.genPoly()
 		self.polyWidth = 0
-		#self.rotate()
 		
-		self.grassPoly = []
+		self.grassLine = []
 		
-		self.wholePoly = []
-		self.newWholePoly()
-		
+		self.eyeCandy = []
+		self.trees    = []
+	
+	
 	def genPoly(self):
 		self.polyUpper = []
 		self.polyLower = []
@@ -55,23 +63,20 @@ class Island():
 		lastX = cpoly[-1][0]
 		for i in cpoly:
 			if i[0] > lastX:
-				self.grassPoly.append([i[0],i[1]])
+				self.grassLine.append([i[0],i[1]])
 			lastX = i[0]
-		
-		grassPolyUpper = self.grassPoly[:]
-		
-		for i in grassPolyUpper:
-			i = [i[0],i[1]-50]
-			self.grassPoly.append(i)
-		
 		return cpoly
 	
 	def newWholePoly(self):
+		self.clearData()
 		self.genPoly()
 		self.wholePoly = self.cPoly()
 		
+	
+	def genEyeCandy(self):
+		objNum = self.polyWidth/4
+	
+	
 	def rotate(self, ori):
-		pass
-	def reCompute(self):
 		pass
 

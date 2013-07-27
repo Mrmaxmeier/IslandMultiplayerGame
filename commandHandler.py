@@ -9,20 +9,49 @@ def sendToPlayer(s, msg):	print "-->"+s+": "+msg	#DEBUG
 
 
 
-class CommandHandlerObj():
-	def __init__(self, serverObj = none, clientObj = none):
-		self.sObj = serverObj
+class clientCommandHandlerObj():
+	def __init__(self, clientObj):
 		self.cObj = clientObj
-		if self.serverObj:
-			self.type = "server"
-		else:
-			self.type = "client"
+		self.type = "client"
+		self.displayMsg = self.cObj.displayMsg
 		
-		if self.type == "server":
-			self.sendToAll = self.sObj.sendToAll
-			self.sendToPlayer = self.sObj.sendToPlayer
+	
+	def clientSideCmdParse(self, cmd):
+		cmd = cmd.split(" ")
+	
+	
+		cmdBase = cmd[0]
+		cmd.remove(cmdBase)
+		args = cmd
+	
+		for i in range(99):
+			args.append("none")
+	
+		if cmdBase == "serverRequest":
+			if args[0] == "name":
+				self.sendToServer(self.cObj.player.name)
+			else:
+				pass
+			
+	
+	
+	def clientIncomingMsg(self, msg):
+		if msg.startswith("!"):
+			self.clientSideCmdParse(msg[1:])
 		else:
-			self.displayMsg = self.cObj.displayMsg
+			self.displayMsg(msg)
+
+
+
+
+
+
+class serverCommandHandlerObj():
+	def __init__(self, serverObj):
+		self.sObj = serverObj
+		self.type = "server"
+		self.sendToAll = self.sObj.sendToAll
+		self.sendToPlayer = self.sObj.sendToPlayer
 		
 	
 	def serverSideCmdParse(self, cmd, sender):
@@ -72,50 +101,9 @@ class CommandHandlerObj():
 		else:
 			self.sendToPlayer(sender, "Could not recognize your Command: !"+cmdBase)
 
-
-
-
-	def clientSideCmdParse(self, cmd):
-		cmd = cmd.split(" ")
-	
-	
-		cmdBase = cmd[0]
-		cmd.remove(cmdBase)
-		args = cmd
-	
-		for i in range(99):
-			args.append("none")
-	
-		if cmdBase == "serverRequest":
-			if args[0] == "name":
-				self.sendToServer(self.cObj.player.name)
-			else:
-				pass
-			
-
-
-
-
-
 	def serverIncomingMsg(self, msg, sender):
 		if msg.startswith("!"):
 			#sendToOps("-!- "+sender+": "+msg)
 			self.serverSideCmdParse(msg[1:], sender)
 		else:
 			self.sendToAll(sender+": "+msg)
-	
-	
-	
-	def clientIncomingMsg(self, msg):
-		if msg.startswith("!"):
-			self.clientSideCmdParse(msg[1:])
-		else:
-			self.displayMsg(msg)
-
-
-testObj = CommandHandlerObj()
-sender = "Mrmaxmeier"
-while DEBUG:
-	#sender = raw_input("Msg from -> ")
-	msg = raw_input("Msg from "+sender+"-> ")
-	testObj.serverIncomingMsg(msg, sender)

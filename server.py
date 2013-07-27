@@ -16,7 +16,7 @@ class Server():
 		self.map = []		#[Island, Island...]
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
-		self.cmdObj = CommandHandlerObj()
+		self.cmdObj = serverCommandHandlerObj(self)
 		self.sock2name = {}	#{"Sock":"Name"}
 		self.name2sock = {}	#{"Name":"Sock"}
 		self.socketList = []
@@ -28,8 +28,8 @@ class Server():
 	def tick(self):
 		if self.unprocessedChat:
 			for sender, cmd, timestamp in self.unprocessedChat:
-			self.cmdObj.serverIncomingMessage(sender, cmd)
-			self.chatLog.append([sender, cmd, timestamp])
+				self.cmdObj.serverIncomingMessage(sender, cmd)
+				self.chatLog.append([sender, cmd, timestamp])
 	
 	
 	def mainloop(self):

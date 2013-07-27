@@ -44,6 +44,7 @@ class Server():
 		name = sock.recv(1024)
 		self.sock2name[sock] = name
 		self.name2sock[name] = sock
+		print name+" = "+addr[0]
 		while 1:
 			msg = sock.recv(1024*16)
 			if msg:
@@ -51,7 +52,7 @@ class Server():
 				print addr, ":", msg
 			else:
 				self.unprocessedChat.append([name, "!leave", time.time()])
-				print addr, "closed!"
+				print addr, "/ '" + name + "' closed!"
 				self.socketList.remove(sock)
 				return
 

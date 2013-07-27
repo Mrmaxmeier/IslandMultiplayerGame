@@ -10,10 +10,20 @@ def sendToPlayer(s, msg):	print "-->"+s+": "+msg	#DEBUG
 
 
 class CommandHandlerObj():
-	def __init__(self, serverObj, clientObj):
+	def __init__(self, serverObj = none, clientObj = none):
 		self.sObj = serverObj
 		self.cObj = clientObj
-		self.type = "unknown"
+		if self.serverObj:
+			self.type = "server"
+		else:
+			self.type = "client"
+		
+		if self.type == "server":
+			self.sendToAll = self.sObj.sendToAll
+			self.sendToPlayer = self.sObj.sendToPlayer
+		else:
+			self.displayMsg = self.cObj.displayMsg
+		
 	
 	def serverSideCmdParse(self, cmd, sender):
 		cmd = cmd.split(" ")
@@ -27,25 +37,25 @@ class CommandHandlerObj():
 			args.append("none")
 	
 		if cmdBase == "leave":
-			sendToAll("[-] "+sender+" left.")
+			self.sendToAll("[-] "+sender+" left.")
 		elif cmdBase == "join":
-			sendToAll("[+] "+sender+" joined.")
+			self.sendToAll("[+] "+sender+" joined.")
 		elif cmdBase == "suicide":
-			sendToPlayer(sender, "!death")
+			self.sendToPlayer(sender, "!death")
 		elif cmdBase == "death":
 			if args[0] == "void" and args[1] == "none":
-				sendToAll("[=] "+sender+" fell out of the World.")
+				self.sendToAll("[=] "+sender+" fell out of the World.")
 			elif args[0] == "void":
-				sendToAll("[=] "+sender+" fell out of the World, thrown by "+args[1]+".")
+				self.sendToAll("[=] "+sender+" fell out of the World, thrown by "+args[1]+".")
 			else:
-				sendToAll("[=] "+sender+" died.")
+				self.sendToAll("[=] "+sender+" died.")
 	
 		elif cmdBase == "msg":
-			sendToPlayer(sender, sender+" --> "+args[0]+": "+args[1])
-			sendToPlayer(args[0], sender+" --> "+args[0]+": "+args[1])
+			self.sendToPlayer(sender, sender+" --> "+args[0]+": "+args[1])
+			self.sendToPlayer(args[0], sender+" --> "+args[0]+": "+args[1])
 	
 		elif cmdBase == "help":
-			sendToPlayer(sender, "HELPTEXT\nNEWLINE\nStuff\nTEST")
+			self.sendToPlayer(sender, "HELPTEXT\nNEWLINE\nStuff\nTEST")
 	
 		elif cmdBase == "playerAction":
 			pass #queue.addAction([sender,args[0]])
@@ -55,24 +65,52 @@ class CommandHandlerObj():
 			pass
 		elif cmdBase == "heal":
 			pass
-		elif cmdBase == "DEBUGMODE":
-			pass #map.playerlist[sender][mode] = "DEBUG"
 	
 	
 	
 	
 		else:
-			sendToPlayer(sender, "Could not recognize your Command: !"+cmdBase)
+			self.sendToPlayer(sender, "Could not recognize your Command: !"+cmdBase)
+
+
+
+
+	def clientSideCmdParse(self, cmd):
+		cmd = cmd.split(" ")
+	
+	
+		cmdBase = cmd[0]
+		cmd.remove(cmdBase)
+		args = cmd
+	
+		for i in range(99):
+			args.append("none")
+	
+		if cmdBase == "serverRequest":
+			if args[0] == "name":
+				self.sendToServer(self.cObj.player.name)
+			else:
+				pass
+			
+
 
 
 
 
 	def serverIncomingMsg(self, msg, sender):
 		if msg.startswith("!"):
-			sendToOps("-!- "+sender+": "+msg)
-			serverSideCmdParse(msg[1:], sender)
+			#sendToOps("-!- "+sender+": "+msg)
+			self.serverSideCmdParse(msg[1:], sender)
 		else:
-			sendToAll(sender+": "+msg)
+			self.sendToAll(sender+": "+msg)
+	
+	
+	
+	def clientIncomingMsg(self, msg):
+		if msg.startswith("!"):
+			self.clientSideCmdParse(msg[1:])
+		else:
+			self.displayMsg(msg)
 
 
 testObj = CommandHandlerObj()

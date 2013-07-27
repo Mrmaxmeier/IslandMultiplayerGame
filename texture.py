@@ -4,12 +4,15 @@ import pygame
 class Texture():
 # simple texture class
 # designed for 32 bit png images (with alpha channel)
-	def __init__(self,fileName):
+	def __init__(self,pathOrSurface):
 		self.texID=0
-		self.LoadTexture(fileName)
-	def LoadTexture(self,fileName): 
+		if type(pathOrSurface) == str:
+			surface = pygame.image.load(pathOrSurface)
+		else:
+			surface = pathOrSurface
+		self.LoadTexture(surface)
+	def LoadTexture(self,textureSurface):
 		try:
-			textureSurface = pygame.image.load(fileName)
 			textureData = pygame.image.tostring(textureSurface, "RGBA", 1)
 			
 			self.w, self.h = textureSurface.get_width(), textureSurface.get_height()
@@ -23,6 +26,6 @@ class Texture():
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)
 		except:
-			print "can't open the texture: %s"%(fileName)
+			print "can't open the texture: %s"%(textureSurface)
 	def __del__(self):
 		glDeleteTextures(self.texID)

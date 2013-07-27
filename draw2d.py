@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from math import *
 from texture import Texture
+from pygame.font import Font
 
 black = 0,0,0,1
 white = 1,1,1,1
@@ -47,6 +48,14 @@ def sprite(tex, (x, y), a=1):
 		glVertex2f(x+tex.w*dx, y+tex.h*dy)
 	glEnd()
 	glDisable(GL_TEXTURE_2D)
+
+def text(text, font, pos, col=(255, 255, 255, 255), bg=(0,0,0,255)):
+	img = font.render(text, True, col, bg)
+	tex = Texture(img)
+	scaled((0, img.get_height()/2), (1, -1), sprite, tex, pos)
+
+def font(size, file=None):
+	return Font(file, size)
 
 def texpoly(tex, (ox, oy), points, a=1):
 	setCol(transparent(a, white))

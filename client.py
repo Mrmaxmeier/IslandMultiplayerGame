@@ -42,19 +42,23 @@ class Client():
 			print e
 	
 	def chandle(self, sock, addr):
-		print "connected to", addr
-		while 1:
-			msg = sock.recv(1024)
-			if msg:
-				self.cmdObj.clientIncomingMsg(msg)
+		try:
+			print "connected to", addr
+			while 1:
+				msg = sock.recv(1024)
+				if msg:
+					self.cmdObj.clientIncomingMsg(msg)
 			
-			else:
-				print addr, "closed!"
-				return
+				else:
+					print addr, "closed!"
+					return
+		except Exception as e:
+			print e
 	
 	
 	def mainloop(self):
-		self.gameclock.tick(30)
+		while 1:
+			self.gameclock.tick(30)
 
 
 

@@ -30,6 +30,7 @@ class Server():
 			for sender, cmd, timestamp in self.unprocessedChat:
 				self.cmdObj.serverIncomingMsg(sender, cmd)
 				self.chatLog.append([sender, cmd, timestamp])
+				self.unprocessedChat.remove([sender, cmd, timestamp])
 	
 	
 	def mainloop(self):
@@ -51,6 +52,7 @@ class Server():
 			else:
 				self.unprocessedChat.append([name, "!leave", time.time()])
 				print addr, "closed!"
+				self.socketList.remove(sock)
 				return
 
 	def serve(self, port, message):
@@ -82,6 +84,6 @@ class Server():
 
 if __name__ == "__main__":
 	server = Server()
-	thread.start_new_thread(server.serve, (PORT, "!serverrequest name",))
+	thread.start_new_thread(server.serve, (PORT, "!serverRequest name",))
 	
 	server.mainloop()

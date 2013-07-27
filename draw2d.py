@@ -86,6 +86,9 @@ def translated((x, y), fun, *args, **kwd):
 	f = lambda: glTranslatef(x, y, 0)
 	with_transform(f, fun, *args, **kwd)
 
+def translate((tx, ty), (x, y)):
+	return tx+x, ty+y
+
 def rotated((x, y), a, fun, *args, **kwd):
 	def f():
 		glTranslatef(x, y, 0)
@@ -93,12 +96,22 @@ def rotated((x, y), a, fun, *args, **kwd):
 		glTranslatef(-x, -y, 0)
 	with_transform(f, fun, *args, **kwd)
 
+def rotate((ox, oy), a, (x, y)):
+	dx, dy = x-ox, y-oy
+	a = a*pi/180
+	dx, dy = dx*cos(a)-dy*sin(a), dx*sin(a)+dy*cos(a)
+	return dx+ox, dy+oy
+
 def scaled((x, y), (sx, sy), fun, *args, **kwd):
 	def f():
 		glTranslatef(x, y, 0)
 		glScalef(sx, sy, 1)
 		glTranslatef(-x, -y, 0)
 	with_transform(f, fun, *args, **kwd)
+
+def scale((ox, oy), (sx, sy), (x, y)):
+	dx, dy = x-ox, y-oy
+	return ox+sx*dx, oy+sy*dy
 
 def skewed((x, y), (sx, sy), fun, *args, **kwd):
 	def f():

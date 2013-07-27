@@ -6,7 +6,7 @@ class Main(StdMain):
 	def __init__(self):
 		self.dirt = Texture("./assets/textures/dirt.png")
 		self.grass = Texture("./assets/textures/grass_overlay.png")
-		self.island = Island()
+		self.island = Island((200,300))
 		self.t = 0
 	
 	def draw(self):
@@ -23,13 +23,11 @@ class Main(StdMain):
 		#	rotated, (32,32), self.t*90,
 		#		sprite, self.dirt, (0,0))
 		
-		coords = (200,300)
-		
-		translated(coords, texquads, self.dirt, pygame.mouse.get_pos(), self.island.polyUpper, self.island.polyLower)
-		translated(coords, drawGrass, self.grass, 0, 0, -63, 0, self.island.grassLine)
+		self.island.draw(self)
 	
 	def update(self, dt):
 		self.t += dt
+		self.island.rotate(45*dt)
 	
 	def onKey(self, event):
 		if event.key == K_UP:

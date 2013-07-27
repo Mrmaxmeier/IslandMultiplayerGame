@@ -14,6 +14,7 @@ class clientCommandHandlerObj():
 		self.cObj = clientObj
 		self.type = "client"
 		self.displayMsg = self.cObj.displayMsg
+		self.sendToServer = self.cObj.sendToServer
 		
 	
 	def clientSideCmdParse(self, cmd):

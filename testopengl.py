@@ -23,7 +23,7 @@ class Main(StdMain):
 		#	rotated, (32,32), self.t*90,
 		#		sprite, self.dirt, (0,0))
 		
-		text("Hello, World!", font(150), (0,0))
+		text("Hello, World!", font(150), (100,100))
 		
 		self.island.draw(self)
 	

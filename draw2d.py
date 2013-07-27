@@ -49,10 +49,12 @@ def sprite(tex, (x, y), a=1):
 	glEnd()
 	glDisable(GL_TEXTURE_2D)
 
-def text(text, font, pos, col=(255, 255, 255, 255), bg=(0,0,0,255)):
+def text(text, font, pos, col=(255, 255, 255, 255), bg=(0,0,0,0)):
 	img = font.render(text, True, col, bg)
 	tex = Texture(img)
-	scaled((0, img.get_height()/2), (1, -1), sprite, tex, pos)
+	translated(pos,
+		scaled, (0, img.get_height()/2), (1, -1),
+			sprite, tex, (0,0))
 
 def font(size, file=None):
 	return Font(file, size)

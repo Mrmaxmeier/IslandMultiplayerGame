@@ -24,6 +24,9 @@ class Client(StdMain):
 		self.sendclock = pygame.time.Clock()
 		self.gameclock = pygame.time.Clock()
 		self.gameState = "mainmenu"
+		
+		self.connectTo = ""
+		
 		self.t = 0
 	
 	
@@ -63,9 +66,11 @@ class Client(StdMain):
 			while 1:
 				msg = sock.recv(1024)
 				if msg:
+					print "received "+msg
 					self.cmdObj.clientIncomingMsg(msg)
 			
 				else:
+					self.gameState = "mainmenu"
 					print addr, "closed!"
 					return
 		except Exception as e:
@@ -76,11 +81,20 @@ class Client(StdMain):
 		self.gameclock.tick(30)
 		self.player.update(dt)
 	
+	def ingame_draw(self):
+		text("INGAME 2GO", font(50), (50, 200))
+		self.gameclock.tick(30)
+	
+	
 	def draw(self):
 		if self.gameState == "mainmenu":
 			self.mainmenu_draw()
 		elif self.gameState == "changeNick":
 			self.changeNick_draw()
+		elif self.gameState == "directConnect":
+			self.directConnect_draw()
+		elif self.gameState == "ingame":
+			self.ingame_draw()
 		
 		else:
 			text("NO VALID GAMESTATE", font(100), (0,0))
@@ -94,12 +108,21 @@ class Client(StdMain):
 		text("3: Change Nick", font(75), (50, 200))
 
 		text("Current Nick: "+self.player.name, font(75), (50, 300))
+	
 	def changeNick_draw(self):
 		if self.player.name == "":
 			text("Type to change Nick", font(50), (50, 200))
 		else:
 			text("Press <ENTER> to finish your Name.", font(50), (50, 200))
 		text("Current Nick: "+self.player.name, font(75), (50, 300))
+	
+	def directConnect_draw(self):
+		if self.player.name == "":
+			text("Type in the IP/Hostname.", font(50), (50, 200))
+		else:
+			text("Press <ENTER> to finish.", font(50), (50, 200))
+		text("Current IP: "+self.connectTo, font(75), (50, 300))
+		
 	
 	
 	def onKey(self, event):
@@ -116,6 +139,13 @@ class Client(StdMain):
 				self.gameState = "mainmenu"
 			else:
 				self.player.name += event.unicode
+		elif self.gameState == "directConnect":
+			if event.key == K_RETURN:
+				thread.start_new_thread(self.connectToServer, (self.connectTo,))
+				
+				self.gameState = "ingame"
+			else:
+				self.connectTo += event.unicode
 
 
 

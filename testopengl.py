@@ -12,7 +12,7 @@ class Main(StdMain):
 		self.space.gravity = (0, 50)
 		self.island = Island((400,300), self.space)
 		self.island.rotate(135)
-		self.players = [Player("ich", (x, -50), self.space) for x in range(0, 600, 25)]
+		self.players = [Player((x, -50), self.space) for x in range(0, 600, 25)]
 		self.t = 0
 	
 	def draw(self):

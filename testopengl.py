@@ -1,12 +1,18 @@
 from draw2d import *
 from mainloop import *
 from island import *
+from player import *
+import pymunk
 
 class Main(StdMain):
 	def __init__(self):
 		self.dirt = Texture("./assets/textures/dirt.png")
 		self.grass = Texture("./assets/textures/grass_overlay.png")
-		self.island = Island((200,300))
+		self.space = pymunk.Space()
+		self.space.gravity = (0, 50)
+		self.island = Island((400,300), self.space)
+		self.island.rotate(135)
+		self.players = [Player("ich", (x, -50), self.space) for x in range(0, 600, 25)]
 		self.t = 0
 	
 	def draw(self):
@@ -26,10 +32,12 @@ class Main(StdMain):
 		text("Hello, World!", font(150), (100,100))
 		
 		self.island.draw(self)
+		[player.draw() for player in self.players]
 	
 	def update(self, dt):
 		self.t += dt
-		self.island.rotate(45*dt)
+		self.island.body.apply_impulse((100, 1))
+		self.space.step(dt)
 	
 	def onKey(self, event):
 		if event.key == K_UP:

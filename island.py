@@ -1,10 +1,15 @@
 import random
 from draw2d import *
+import pymunk
 
 class Island():
-	def __init__(self, pos):
+	def __init__(self, pos, space):
+		self.body = pymunk.Body()
 		self.pos = pos
 		self.newWholePoly()
+		self.shapes = self.getShapes()
+		space.add(self.shapes)
+		self.space = space
 	
 	def clearData(self):
 		self.polyUpper = []
@@ -42,11 +47,22 @@ class Island():
 			self.curx += random.randrange(15, 20)
 			self.polyLower.append([self.curx, random.randrange(25, 50) + ymod])
 	
+	def getTranslation(self):
+		mx, my = self.middle
+		px, py = self.pos
+		return px-mx, py-my
+	
 	def getPoly(self):
-		points = self.polyUpper
-		points += reversed(self.polyLower)
-		f = lambda p: translate(self.pos, rotate(self.middle, self.rot, p))
-		return map(trafo, points)
+		points = self.polyUpper + list(reversed(self.polyLower))
+		f = lambda p: translate(self.getTranslation(), rotate(self.middle, self.rot, p))
+		return map(f, points)
+	
+	def getShapes(self):
+		mx, my = self.middle
+		points = self.getPoly()
+		tris = pymunk.util.triangulate(points)
+		self.tris = tris
+		return [pymunk.Poly(self.body, tri) for tri in tris]
 	
 	def newWholePoly(self):
 		self.clearData()
@@ -57,10 +73,13 @@ class Island():
 	
 	def rotate(self, drot):
 		self.rot += drot
+		self.space.remove(self.shapes)
+		self.shapes = self.getShapes()
+		self.space.add(self.shapes)
 	
 	def draw(self, main):
 		def draw():
 			texquads(main.dirt, self.middle, self.polyUpper, self.polyLower)
 			drawGrass(main.grass, 0, 0, -63, 0, self.polyUpper)
-		translated(self.pos, rotated, self.middle, self.rot, draw)
+		translated(self.getTranslation(), rotated, self.middle, self.rot, draw)
 

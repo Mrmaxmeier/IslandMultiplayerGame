@@ -2,6 +2,7 @@ from draw2d import *
 from mainloop import *
 from island import *
 from player import *
+from chatUI import *
 import pymunk
 import random
 
@@ -15,6 +16,9 @@ class Main(StdMain):
 		self.island.rotate(135)
 		self.players = [Player((x, random.randrange(-500, 0)), self.space) for x in range(0, 600, 20)]
 		self.t = 0
+		
+		def onMsg(text): print "msg: ", text
+		self.chat = Chat(onMsg, font(50), 600)
 	
 	def draw(self):
 		#texpoly(self.tex, pygame.mouse.get_pos(), [(0,0), (400, 100), (600, 400), (200, 300)])
@@ -34,10 +38,14 @@ class Main(StdMain):
 		
 		self.island.draw(self)
 		[player.draw() for player in self.players]
+		self.chat.draw()
 	
 	def update(self, dt):
 		self.t += dt
 		self.space.step(dt)
+		if random.random() < dt*0.5:
+			self.chat.receive("Bla, %d" % self.t)
+		self.chat.update(dt)
 	
 	def onKey(self, event):
 		if event.key == K_UP:

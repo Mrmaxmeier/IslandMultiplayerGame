@@ -3,15 +3,15 @@ from pygame.locals import *
 
 class Message:
 	def __init__(self, text, font):
-		self.text = text
+		self.texts = text.split("\n")
 		self.font = font
 		self.a = 1
 	
-	def draw(self, yb):
-		dx, dy = self.font.size(self.text)
-		yt = yb - dy
-		text(self.text, self.font, (0, yt), (255, 0, 255), self.a)
-		return yt
+	def draw(self, y):
+		for txt in reversed(self.texts):
+			y -= self.font.size(txt)[1]
+			text(txt, self.font, (0, y), (255, 0, 255), self.a)
+		return y
 
 class Chat:
 	def __init__(self, sendCallback, font, y):
@@ -43,7 +43,6 @@ class Chat:
 			self.send(self.toSend)
 			self.toSend = ""
 		elif event.key == K_BACKSPACE:
-			print "Delete"
 			self.toSend = self.toSend[:-1]
 		else:
 			self.toSend += event.unicode

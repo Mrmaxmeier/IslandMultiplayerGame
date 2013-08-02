@@ -44,7 +44,7 @@ class Main(StdMain):
 		self.t += dt
 		self.space.step(dt)
 		if random.random() < dt*0.5:
-			self.chat.receive("Bla, %d" % self.t)
+			self.chat.receive("Bla, %d\nloollsd" % self.t)
 		self.chat.update(dt)
 	
 	def onKey(self, event):

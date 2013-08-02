@@ -3,6 +3,7 @@ from mainloop import *
 from island import *
 from player import *
 import pymunk
+import random
 
 class Main(StdMain):
 	def __init__(self):
@@ -12,7 +13,7 @@ class Main(StdMain):
 		self.space.gravity = (0, 50)
 		self.island = Island((400,300), self.space)
 		self.island.rotate(135)
-		self.players = [Player((x, -50), self.space) for x in range(0, 600, 25)]
+		self.players = [Player((x, random.randrange(-500, 0)), self.space) for x in range(0, 600, 20)]
 		self.t = 0
 	
 	def draw(self):
@@ -36,7 +37,6 @@ class Main(StdMain):
 	
 	def update(self, dt):
 		self.t += dt
-		self.island.body.apply_impulse((100, 1))
 		self.space.step(dt)
 	
 	def onKey(self, event):

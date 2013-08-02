@@ -154,6 +154,8 @@ class Client(StdMain):
 		elif self.gameState == "changeNick":
 			if event.key == K_RETURN:
 				self.gameState = "mainmenu"
+			elif event.key == K_BACKSPACE:
+				self.player.name = self.player.name[:-1]
 			else:
 				self.player.name += event.unicode
 		elif self.gameState == "directConnect":
@@ -161,6 +163,8 @@ class Client(StdMain):
 				thread.start_new_thread(self.connectToServer, (self.connectTo,))
 				
 				self.gameState = "ingame"
+			elif event.key == K_BACKSPACE:
+				self.connectTo = self.connectTo[:-1]
 			else:
 				self.connectTo += event.unicode
 		elif self.gameState == "ingame":

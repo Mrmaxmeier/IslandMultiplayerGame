@@ -17,7 +17,7 @@ class Main(StdMain):
 		self.players = [Player((x, random.randrange(-500, 0)), self.space) for x in range(0, 600, 20)]
 		self.t = 0
 		
-		def onMsg(text): print "msg: ", text
+		def onMsg(text): print repr(text)
 		self.chat = Chat(onMsg, font(50), 600)
 	
 	def draw(self):
@@ -50,5 +50,7 @@ class Main(StdMain):
 	def onKey(self, event):
 		if event.key == K_UP:
 			self.island.newWholePoly()
+		else:
+			self.chat.onKey(event)
 
 mainloop(((800, 600), "IslandGame", 30), Main)

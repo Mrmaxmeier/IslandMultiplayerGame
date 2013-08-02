@@ -1,4 +1,5 @@
 from draw2d import *
+from pygame.locals import *
 
 class Message:
 	def __init__(self, text, font):
@@ -16,6 +17,7 @@ class Chat:
 	def __init__(self, sendCallback, font, y):
 		self.send = sendCallback
 		self.messages = []
+		self.toSend = ""
 		self.font = font
 		self.y = y
 	
@@ -23,7 +25,8 @@ class Chat:
 		self.messages.insert(0, Message(message, self.font))
 	
 	def draw(self):
-		y = self.y
+		y = self.y - self.font.size(self.toSend)[1]
+		text(self.toSend, self.font, (0, y), (128, 255, 128))
 		for message in self.messages:
 			y = message.draw(y)
 	
@@ -34,3 +37,13 @@ class Chat:
 			if msg.a <= 0:
 				self.messages.remove(msg)
 			count += 1
+	
+	def onKey(self, event):
+		if event.key == K_RETURN:
+			self.send(self.toSend)
+			self.toSend = ""
+		elif event.key == K_BACKSPACE:
+			print "Delete"
+			self.toSend = self.toSend[:-1]
+		else:
+			self.toSend += event.unicode

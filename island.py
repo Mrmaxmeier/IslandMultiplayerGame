@@ -1,6 +1,42 @@
-import random
 from draw2d import *
+
+import random
 import pymunk
+import time
+
+
+class Map():
+	def __init__(self, seed = None):
+		if seed:
+			self.seed = seed
+		else:
+			self.seed = time.time()
+		self.islands = []
+		self.islseed2isl = {} #{Seed:Island, }
+		
+		self.players = []
+		self.name2player = {} #{Name:Player}
+
+		self.space = pymunk.Space()
+		self.space.gravity = (0, 50)
+		
+	
+	def genIslands(self):
+		for num in range(10):
+			random.seed(self.seed + num)
+			pos = (random.randrange(50, 100)+num*150, random.randrange(50,500))
+			isl = Island(pos, self.space)
+			isl.seed = self.seed + num
+			self.islseed2isl[isl.seed] = isl
+			self.islands.append(isl)
+	
+	def draw(self):
+		for island in self.islands:
+			island.draw()
+	
+
+
+
 
 class Island():
 	def __init__(self, pos, space):

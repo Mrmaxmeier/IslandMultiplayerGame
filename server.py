@@ -5,7 +5,7 @@ import time
 
 from commandHandler import *
 from player import *
-
+from island import *
 
 PORT = 50662
 
@@ -13,7 +13,8 @@ PORT = 50662
 class Server():
 	def __init__(self):
 		self.players = []	#[PlayerObj, PlayerObj...]
-		self.map = []		#[Island, Island...]
+		self.map = Map(time.time())
+		self.map.genIslands()
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
 		self.cmdObj = serverCommandHandlerObj(self)
@@ -25,11 +26,16 @@ class Server():
 		
 		self.running = True
 	
+	
+	
+	
+	
 	def tick(self):
 		if self.unprocessedChat:
 			for sender, cmd, timestamp in self.unprocessedChat:
-				self.cmdObj.serverIncomingMsg(sender, cmd)
+				self.cmdObj.serverIncomingMsg(cmd, sender)
 				self.chatLog.append([sender, cmd, timestamp])
+				print str(timestamp)+": "+sender+" -> "+cmd
 				self.unprocessedChat.remove([sender, cmd, timestamp])
 	
 	
@@ -44,6 +50,7 @@ class Server():
 		name = sock.recv(1024)
 		self.sock2name[sock] = name
 		self.name2sock[name] = sock
+		self.unprocessedChat.append([name, "!join", time.time()])
 		print name+" = "+addr[0]
 		while 1:
 			msg = sock.recv(1024*16)
@@ -77,7 +84,7 @@ class Server():
 		
 	def sendToPlayer(self, playername, msg):
 		socket = self.name2sock[playername]
-		socket.send(message)
+		socket.send(msg)
 		
 
 

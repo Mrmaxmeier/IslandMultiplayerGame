@@ -12,6 +12,12 @@ def sendToPlayer(s, msg):	print "-->"+s+": "+msg	#DEBUG
 class clientCommandHandlerObj():
 	def __init__(self, clientObj):
 		self.cObj = clientObj
+		self.cMap = self.cObj.map
+		self.cIslands = self.cMap.islands
+		self.cSeed2isl = self.cMap.islseed2isl
+		self.cName2Player = self.cMap.name2player
+		self.cPlayers = self.cMap.players
+		
 		self.type = "client"
 		self.displayMsg = self.cObj.displayMsg
 		self.sendToServer = self.cObj.sendToServer
@@ -25,14 +31,27 @@ class clientCommandHandlerObj():
 		cmd.remove(cmdBase)
 		args = cmd
 	
-		for i in range(99):
-			args.append("none")
+		for i in range(9):
+			args.append(None)
 	
 		if cmdBase == "serverRequest":
 			if args[0] == "name":
 				self.sendToServer(self.cObj.player.name)
 			else:
 				pass
+		elif cmdBase == "serverInformation":
+			if args[0] == "mapSeed":
+				self.cMap.seed = args[1]
+				self.cMap.genIslands()
+			elif args[0] == "islandPosition":# seed pos angle
+				self.cSeed2isl[args[1]].body.position = args[2]
+				self.cSeed2isl[args[1]].body.angle = args[3]
+			elif args[0] == "playerPosision":# name pos angle
+				if not args[1] == self.cObj.player.name:
+					self.cName2Player[args[1]].body.position = args[2]
+					self.cName2Player[args[1]].body.angle = args[3]
+				else:
+					print "got OWN Position"
 			
 	
 	
@@ -64,7 +83,7 @@ class serverCommandHandlerObj():
 		args = cmd
 	
 		for i in range(99):
-			args.append("none")
+			args.append(None)
 	
 		if cmdBase == "leave":
 			self.sendToAll("[-] "+sender+" left.")
@@ -73,10 +92,10 @@ class serverCommandHandlerObj():
 		elif cmdBase == "suicide":
 			self.sendToPlayer(sender, "!death")
 		elif cmdBase == "death":
-			if args[0] == "void" and args[1] == "none":
+			if args[0] == "void" and args[1] == None:
 				self.sendToAll("[=] "+sender+" fell out of the World.")
 			elif args[0] == "void":
-				self.sendToAll("[=] "+sender+" fell out of the World, thrown by "+args[1]+".")
+				self.sendToAll("[=] "+sender+" fell out of the World, killed by "+args[1]+".")
 			else:
 				self.sendToAll("[=] "+sender+" died.")
 	
@@ -86,6 +105,9 @@ class serverCommandHandlerObj():
 	
 		elif cmdBase == "help":
 			self.sendToPlayer(sender, "HELPTEXT\nNEWLINE\nStuff\nTEST")
+		elif cmdBase == "ping":
+			print "parsing Ping"
+			self.sendToPlayer(sender, "Pong!")
 	
 		elif cmdBase == "playerAction":
 			pass #queue.addAction([sender,args[0]])

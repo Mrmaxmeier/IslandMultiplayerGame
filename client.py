@@ -10,6 +10,7 @@ from draw2d import *
 from mainloop import *
 from island import *
 
+from chatUI import *
 
 
 PORT = 50662
@@ -17,17 +18,25 @@ PORT = 50662
 
 class Client(StdMain):
 	def __init__(self):
-		self.cmdObj = clientCommandHandlerObj(self)
+		self.map = Map()
 		
-		self.player = Player()
+		self.player = Player((0,0), self.map.space)
 		self.msgToBeSent = []	#["Msg","Msg"...]
 		self.sendclock = pygame.time.Clock()
 		self.gameclock = pygame.time.Clock()
 		self.gameState = "mainmenu"
 		
+		
+		pygame.init()
+		self.chat = Chat(self.sendToServer, font(50), 600)
+		
+		
+		
 		self.connectTo = ""
 		
 		self.t = 0
+		
+		self.cmdObj = clientCommandHandlerObj(self)
 	
 	
 	def update(self, dt):
@@ -67,6 +76,7 @@ class Client(StdMain):
 				msg = sock.recv(1024)
 				if msg:
 					print "received "+msg
+					self.chat.receive(msg)
 					self.cmdObj.clientIncomingMsg(msg)
 			
 				else:
@@ -78,12 +88,19 @@ class Client(StdMain):
 	
 	
 	def ingame_update(self, dt):
+		
+
+		self.map.space.step(dt)
+		self.chat.update(dt)
+		
+		
 		self.gameclock.tick(30)
 		self.player.update(dt)
 	
 	def ingame_draw(self):
 		text("INGAME 2GO", font(50), (50, 200))
 		self.gameclock.tick(30)
+		self.chat.draw()
 	
 	
 	def draw(self):
@@ -146,6 +163,11 @@ class Client(StdMain):
 				self.gameState = "ingame"
 			else:
 				self.connectTo += event.unicode
+		elif self.gameState == "ingame":
+			if False:
+				pass
+			else:
+				self.chat.onKey(event)
 
 
 

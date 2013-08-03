@@ -1,6 +1,7 @@
 import socket
 import thread
 import pygame
+from supersocket import SuperSocket
 
 print "Imported Pygame, initing..."
 pygame.init()
@@ -118,8 +119,9 @@ class Client(StdMain):
 		try:
 			addr = ((host, port))
 			print "Trying to connect to", addr
-			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			sock.connect(addr)
+			sock_raw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock_raw.connect(addr)
+			sock = SuperSocket(sock_raw)
 			thread.start_new_thread(self.chandle, (sock, addr))
 			while 1:
 				if self.msgToBeSent:

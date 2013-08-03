@@ -6,6 +6,7 @@ import time
 from commandHandler import *
 from player import *
 from island import *
+from supersocket import SuperSocket
 
 PORT = 50662
 
@@ -107,7 +108,8 @@ class Server():
 			serversocket.listen(5)
 			while 1:
 				print "server ready!"
-				(clientsocket, address) = serversocket.accept()
+				(clientsocket_raw, address) = serversocket.accept()
+				clientsocket = SuperSocket(clientsocket_raw)
 				self.socketList.append(clientsocket)
 				clientsocket.send(message)
 				thread.start_new_thread(self.shandle, (clientsocket, address))

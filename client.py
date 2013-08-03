@@ -1,6 +1,11 @@
 import socket
 import thread
 import pygame
+
+print "Imported Pygame, initing..."
+pygame.init()
+print "inited."
+
 import time
 import ConfigParser
 Config = ConfigParser.ConfigParser()
@@ -48,6 +53,9 @@ from island import *
 from chatUI import *
 
 
+
+
+
 PORT = 50662
 
 
@@ -63,8 +71,7 @@ class Client(StdMain):
 		self.gameclock = pygame.time.Clock()
 		self.gameState = "mainmenu"
 		
-		
-		pygame.init()
+
 		self.chat = Chat(self.sendToServer, font(50), 600)
 		
 		

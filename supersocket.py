@@ -7,10 +7,16 @@ class SuperSocket:
 		self.inBuf = ""
 	
 	def send(self, msg):
-		self.sock.send(msg + "\0")
+		try:
+			self.sock.send(msg + "\0")
+		except:
+			return None
 	
 	def recv(self, chsize):
-		while not "\0" in self.inBuf:
-			self.inBuf += self.sock.recv(chsize)
+		try:
+			while not "\0" in self.inBuf:
+				self.inBuf += self.sock.recv(chsize)
+		except:
+			return None
 		msg, _, self.inBuf = self.inBuf.partition("\0")
 		return msg

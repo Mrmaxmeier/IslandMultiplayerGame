@@ -90,7 +90,7 @@ class Server():
 		print name+" = "+addr[0]
 		while 1:
 			msg = sock.recv(1024*16)
-			if msg:
+			if msg != None:
 				self.unprocessedChat.append([name, msg, time.time()])
 				print addr, ":", msg
 			else:

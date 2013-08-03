@@ -139,6 +139,9 @@ class Client(StdMain):
 	def ingame_draw(self):
 		text("INGAME 2GO", font(50), (50, 200))
 		self.gameclock.tick(30)
+		
+		self.map.draw()
+		
 		self.chat.draw()
 	
 	

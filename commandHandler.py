@@ -41,7 +41,7 @@ class clientCommandHandlerObj():
 				pass
 		elif cmdBase == "serverInformation":
 			if args[0] == "mapSeed":
-				self.cMap.seed = args[1]
+				self.cMap.seed = float(args[1])
 				self.cMap.genIslands()
 			elif args[0] == "islandPosition":# seed pos angle
 				self.cSeed2isl[args[1]].body.position = (args[2],args[3])

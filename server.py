@@ -51,11 +51,15 @@ class Server():
 	
 	
 	def newPlayer(self, player):
-		self.sendToPlayer("!serverInformation mapSeed "+str(self.map.seed))
-		for player in self.map.player:
-			angle = player.body.angle
-			pos = player.body.position
-			self.sendToPlayer("!serverInformation playerPosition "+str(pos[0])+" "+str(pos[1])+" "+str(angel))
+		try:
+			print "Sending information to new Player: "+player
+			self.sendToPlayer(player, "!serverInformation mapSeed "+str(self.map.seed))
+			for player in self.map.players:
+				angle = player.body.angle
+				pos = player.body.position
+				self.sendToPlayer("!serverInformation playerPosition "+str(pos[0])+" "+str(pos[1])+" "+str(angel))
+		except Exception as e:
+			print e
 	
 	
 	
@@ -65,6 +69,7 @@ class Server():
 		name = sock.recv(1024)
 		self.sock2name[sock] = name
 		self.name2sock[name] = sock
+		self.newPlayer(name)
 		self.unprocessedChat.append([name, "!join", time.time()])
 		print name+" = "+addr[0]
 		while 1:

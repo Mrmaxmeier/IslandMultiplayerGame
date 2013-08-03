@@ -2,6 +2,41 @@ import socket
 import thread
 import pygame
 import time
+import ConfigParser
+Config = ConfigParser.ConfigParser()
+
+def ConfigSectionMap(section):
+    dict1 = {}
+    options = Config.options(section)
+    for option in options:
+        try:
+            dict1[option] = Config.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
+
+try:
+	Config.read("./settings.ini")
+	Name = ConfigSectionMap("Client")['name']
+	IP = ConfigSectionMap("Client")['ip']
+except Exception as e:
+	print e
+	print "No Configfile avalible."
+	print "Creating one..."
+	cfgfile = open("./settings.ini",'w')
+	try:
+		Config.add_section('Client')
+	except:
+		print "Corrupted file."
+	Config.set('Client','name',"")
+	Name = ""
+	Config.set('Client','ip', "")
+	IP = ""
+	Config.write(cfgfile)
+	cfgfile.close()
 
 from commandHandler import *
 from player import *
@@ -21,6 +56,8 @@ class Client(StdMain):
 		self.map = Map()
 		
 		self.player = Player((0,0), self.map.space)
+		self.player.name = Name
+		
 		self.msgToBeSent = []	#["Msg","Msg"...]
 		self.sendclock = pygame.time.Clock()
 		self.gameclock = pygame.time.Clock()
@@ -32,7 +69,7 @@ class Client(StdMain):
 		
 		
 		
-		self.connectTo = ""
+		self.connectTo = IP
 		
 		self.t = 0
 		
@@ -145,7 +182,6 @@ class Client(StdMain):
 	def onKey(self, event):
 		if self.gameState == "mainmenu":
 			if event.key == K_3:
-				self.player.name = ""
 				self.gameState = "changeNick"
 			if event.key == K_2:
 				self.gameState = "directConnect"
@@ -153,6 +189,10 @@ class Client(StdMain):
 				self.gameState = "bonjourScan"
 		elif self.gameState == "changeNick":
 			if event.key == K_RETURN:
+				cfgfile = open("./settings.ini",'w')
+				Config.set('Client','name',self.player.name)
+				Config.write(cfgfile)
+				cfgfile.close()
 				self.gameState = "mainmenu"
 			elif event.key == K_BACKSPACE:
 				self.player.name = self.player.name[:-1]
@@ -160,6 +200,10 @@ class Client(StdMain):
 				self.player.name += event.unicode
 		elif self.gameState == "directConnect":
 			if event.key == K_RETURN:
+				cfgfile = open("./settings.ini",'w')
+				Config.set('Client','ip',self.connectTo)
+				Config.write(cfgfile)
+				cfgfile.close()
 				thread.start_new_thread(self.connectToServer, (self.connectTo,))
 				
 				self.gameState = "ingame"

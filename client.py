@@ -1,6 +1,11 @@
 import socket
 import thread
 import pygame
+
+print "Imported Pygame, initing..."
+pygame.init()
+print "inited."
+
 import time
 import ConfigParser
 Config = ConfigParser.ConfigParser()
@@ -49,12 +54,15 @@ from island import *
 from chatUI import *
 
 
+
+
+
 PORT = 50662
 
 
 class Client(StdMain):
 	def __init__(self):
-		self.map = Map()
+		self.map = Map(True)
 		
 		self.player = Player((0,0), self.map.space)
 		self.player.name = Name
@@ -64,8 +72,6 @@ class Client(StdMain):
 		self.gameclock = pygame.time.Clock()
 		self.gameState = "mainmenu"
 		
-		
-		pygame.init()
 		self.chat = Chat(self.send, font(50), 600)
 		
 		
@@ -260,7 +266,6 @@ class Client(StdMain):
 if __name__ == "__main__":
 	#host = raw_input("Connect To Host: ")
 	#playerName = raw_input("Your Name: ")
-	client = Client()
 	mainloop(((800, 600), "FlyLands", 30), Client)
 	#thread.start_new_thread(client.connectToServer, (host,))
 	

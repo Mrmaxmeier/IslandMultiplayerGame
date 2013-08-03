@@ -6,7 +6,8 @@ import time
 
 
 class Map():
-	def __init__(self, seed = None):
+	def __init__(self, clientside, seed = None):
+		self.clientside = clientside
 		if seed:
 			self.seed = seed
 		else:
@@ -20,8 +21,9 @@ class Map():
 		self.space = pymunk.Space()
 		self.space.gravity = (0, 50)
 		
-		self.dirt = Texture("./assets/textures/dirt.png")
-		self.grass = Texture("./assets/textures/grass_overlay.png")
+		if self.clientside:
+			self.dirt = Texture("./assets/textures/dirt.png")
+			self.grass = Texture("./assets/textures/grass_overlay.png")
 	
 	def genIslands(self):
 		for num in range(10):

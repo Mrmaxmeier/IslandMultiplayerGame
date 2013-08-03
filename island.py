@@ -20,6 +20,8 @@ class Map():
 		self.space = pymunk.Space()
 		self.space.gravity = (0, 50)
 		
+		self.dirt = Texture("./assets/textures/dirt.png")
+		self.grass = Texture("./assets/textures/grass_overlay.png")
 	
 	def genIslands(self):
 		for num in range(10):
@@ -32,7 +34,7 @@ class Map():
 	
 	def draw(self):
 		for island in self.islands:
-			island.draw()
+			island.draw(self)
 	
 
 

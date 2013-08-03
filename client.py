@@ -238,7 +238,6 @@ class Client(StdMain):
 if __name__ == "__main__":
 	#host = raw_input("Connect To Host: ")
 	#playerName = raw_input("Your Name: ")
-	client = Client()
 	mainloop(((800, 600), "FlyLands", 30), Client)
 	#thread.start_new_thread(client.connectToServer, (host,))
 	

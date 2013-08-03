@@ -62,7 +62,7 @@ class Server():
 			print "Sending information to new Player: "+str(playername)
 			self.sendToPlayer(playername, "!serverInformation mapSeed "+str(self.map.seed))
 			if not playername in self.map.name2player.keys():
-				pos = (random.randrange(0,800), 600)
+				pos = (random.randrange(0,800), 0)
 				newplayer = Player(pos, self.map.space)
 				newplayer.name = playername
 				self.map.players.append(newplayer)

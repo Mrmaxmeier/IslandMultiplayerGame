@@ -94,6 +94,7 @@ class Client(StdMain):
 	def connectToServer(self, host, port = PORT):
 		try:
 			addr = ((host, port))
+			print "Trying to connect to", addr
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock.connect(addr)
 			thread.start_new_thread(self.chandle, (sock, addr))
@@ -115,7 +116,6 @@ class Client(StdMain):
 				msg = sock.recv(1024)
 				if msg:
 					print "received "+msg
-					self.chat.receive(msg)
 					self.cmdObj.clientIncomingMsg(msg)
 			
 				else:

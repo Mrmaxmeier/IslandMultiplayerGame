@@ -58,6 +58,7 @@ class clientCommandHandlerObj():
 	def clientIncomingMsg(self, msg):
 		if msg.startswith("!"):
 			self.clientSideCmdParse(msg[1:])
+			self.displayMsg(msg) #Debug
 		else:
 			self.displayMsg(msg)
 

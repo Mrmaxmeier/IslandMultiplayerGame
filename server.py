@@ -25,6 +25,7 @@ class Server():
 		self.gameclock = pygame.time.Clock()
 		
 		self.running = True
+		self.serversocket = None
 	
 	
 	
@@ -41,9 +42,14 @@ class Server():
 	
 	def mainloop(self):
 		thread.start_new_thread(self.gamemainloop, ())
-		while self.running:
-			self.clock.tick(5)
-			self.tick()
+		try:
+			while self.running:
+				self.clock.tick(5)
+				self.tick()
+		finally:
+			if self.serversocket != None:
+				self.serversocket.close()
+			print "server closed!"
 	def gamemainloop(self):
 		self.map.genIslands()
 		while self.running:
@@ -86,6 +92,7 @@ class Server():
 	def serve(self, port, message):
 		try:
 			serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self.serversocket = serversocket
 			print (socket.gethostname(), port)
 			serversocket.bind((socket.gethostname(), port))
 			serversocket.listen(5)
@@ -97,6 +104,7 @@ class Server():
 				thread.start_new_thread(self.shandle, (clientsocket, address))
 		finally:
 			serversocket.close()
+			print "server closed!"
 	
 	def sendToAll(self, msg):
 		for socket in self.socketList:

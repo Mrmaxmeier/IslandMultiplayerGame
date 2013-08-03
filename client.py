@@ -61,7 +61,7 @@ PORT = 50662
 
 class Client(StdMain):
 	def __init__(self):
-		self.map = Map()
+		self.map = Map(True)
 		
 		self.player = Player((0,0), self.map.space)
 		self.player.name = Name

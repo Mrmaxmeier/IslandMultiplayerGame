@@ -13,7 +13,7 @@ PORT = 50662
 class Server():
 	def __init__(self):
 		self.players = []	#[PlayerObj, PlayerObj...]
-		self.map = Map(time.time())
+		self.map = Map(False, time.time())
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
 		self.cmdObj = serverCommandHandlerObj(self)

@@ -124,6 +124,23 @@ class serverCommandHandlerObj():
 		elif cmdBase == "heal":
 			pass
 	
+		elif cmdBase == "asserver":
+			if args[0] is None: return self.sendToPlayer(sender, "No Player given!")
+			message = " ".join([arg for arg in args[1:] if arg != None])
+			try:
+				self.sendToPlayer(args[0], message)
+				self.sendToPlayer(sender, "Server"+" --> "+args[0]+": "+message)
+			except KeyError:
+				self.sendToPlayer(sender, "Player not found: "+args[0])
+		
+		elif cmdBase == "sudo":
+			if args[0] is None: return self.sendToPlayer(sender, "No Player given!")
+			message = " ".join([arg for arg in args[1:] if arg != None])
+			try:
+				self.sendToPlayer(sender, args[0]+": "+message)
+				self.serverIncomingMsg(message, args[0])
+			except KeyError:
+				self.sendToPlayer(sender, "Player not found: "+args[0])
 	
 	
 	

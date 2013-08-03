@@ -56,16 +56,26 @@ class Server():
 			self.gameclock.tick(30)
 	
 	
-	def newPlayer(self, player):
+	def newPlayer(self, playername):
 		try:
-			print "Sending information to new Player: "+player
-			self.sendToPlayer(player, "!serverInformation mapSeed "+str(self.map.seed))
-			for player in self.map.players:
-				angle = player.body.angle
-				pos = player.body.position
-				self.sendToPlayer("!serverInformation playerPosition "+str(pos[0])+" "+str(pos[1])+" "+str(angel))
+			print "Sending information to new Player: "+str(playername)
+			self.sendToPlayer(playername, "!serverInformation mapSeed "+str(self.map.seed))
+			if not playername in self.map.name2player.keys():
+				pos = (random.randrange(0,800), 600)
+				newplayer = Player(pos, self.map.space)
+				newplayer.name = playername
+				self.map.players.append(newplayer)
+				self.map.name2player[newplayer.name] = newplayer
+				for player in self.map.players:
+					angle = newplayer.body.angle
+					pos = newplayer.body.position
+					self.sendToPlayer(player.name, "!serverInformation newPlayer "+playername+" "+str(pos[0])+" "+str(pos[1])+" "+str(angle))
+					self.sendToPlayer(player.name, "!serverInformation playerPosition "+playername+" "+str(pos[0])+" "+str(pos[1])+" "+str(angle))
+			else:
+				print "Player already registred."
 		except Exception as e:
 			print e
+			raise
 	
 	
 	
@@ -75,7 +85,6 @@ class Server():
 		name = sock.recv(1024)
 		self.sock2name[sock] = name
 		self.name2sock[name] = sock
-		self.newPlayer(name)
 		self.unprocessedChat.append([name, "!join", time.time()])
 		print name+" = "+addr[0]
 		while 1:

@@ -37,6 +37,8 @@ class Map():
 	def draw(self):
 		for island in self.islands:
 			island.draw(self)
+		for player in self.players:
+			player.draw()
 	
 
 

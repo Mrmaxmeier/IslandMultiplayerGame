@@ -1,5 +1,7 @@
 import string
 
+from player import *
+
 DEBUG = True
 
 def sendToAll(msg):		print msg		#DEBUG
@@ -44,14 +46,25 @@ class clientCommandHandlerObj():
 				self.cMap.seed = float(args[1])
 				self.cMap.genIslands()
 			elif args[0] == "islandPosition":# seed pos angle
-				self.cSeed2isl[args[1]].body.position = (args[2],args[3])
-				self.cSeed2isl[args[1]].body.angle = args[4]
+				self.cSeed2isl[args[1]].body.position = (float(args[2]),float(args[3]))
+				self.cSeed2isl[args[1]].body.angle = float(args[4])
 			elif args[0] == "playerPosision":# name pos angle
 				if not args[1] == self.cObj.player.name:
-					self.cName2Player[args[1]].body.position = (args[2],args[3])
-					self.cName2Player[args[1]].body.angle = args[4]
+					self.cName2Player[args[1]].body.position = (float(args[2]),float(args[3]))
+					self.cName2Player[args[1]].body.angle = float(args[4])
 				else:
 					print "got OWN Position"
+			elif args[0] == "newPlayer":# name pos angle
+				if not args[1] in self.cPlayers:
+					pos = (float(args[2]),float(args[3]))
+					newplayer = Player(pos, self.cMap.space)
+					newplayer.name = args[1]
+					self.cPlayers.append(newplayer)
+					self.cName2Player[args[1]] = newplayer
+					self.cName2Player[args[1]].body.position = pos
+					self.cName2Player[args[1]].body.angle = float(args[4])
+				else:
+					print "Player already registred"
 			
 	
 	
@@ -90,6 +103,7 @@ class serverCommandHandlerObj():
 			self.sendToAll("[-] "+sender+" left.")
 		elif cmdBase == "join":
 			self.sendToAll("[+] "+sender+" joined.")
+			self.sObj.newPlayer(sender)
 		elif cmdBase == "suicide":
 			self.sendToPlayer(sender, "!death")
 		elif cmdBase == "death":

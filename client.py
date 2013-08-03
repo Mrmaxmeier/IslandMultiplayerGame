@@ -29,6 +29,7 @@ except Exception as e:
 	cfgfile = open("./settings.ini",'w')
 	try:
 		Config.add_section('Client')
+		Config.add_section('servers')
 	except:
 		print "Corrupted file."
 	Config.set('Client','name',"")
@@ -65,7 +66,7 @@ class Client(StdMain):
 		
 		
 		pygame.init()
-		self.chat = Chat(self.sendToServer, font(50), 600)
+		self.chat = Chat(self.send, font(50), 600)
 		
 		
 		
@@ -85,6 +86,22 @@ class Client(StdMain):
 	
 	
 	
+	
+	def send(self, msg):
+		if self.gameState == "servers":
+			if ":" in msg:
+				name, ip = msg.split(":")
+				cfgfile = open("./settings.ini",'w')
+				Config.set('servers',name,ip)
+				Config.write(cfgfile)
+				cfgfile.close()
+			else:
+				name = msg
+				ip = ConfigSectionMap("servers")[name]
+			thread.start_new_thread(self.connectToServer, (ip,))
+			self.gameState = "ingame"
+		else:
+			self.sendToServer(msg)
 	
 	def sendToServer(self, msg):
 		print "sending: "+msg
@@ -154,7 +171,8 @@ class Client(StdMain):
 			self.directConnect_draw()
 		elif self.gameState == "ingame":
 			self.ingame_draw()
-		
+		elif self.gameState == "servers":
+			self.servers_draw()
 		else:
 			text("NO VALID GAMESTATE", font(100), (0,0))
 			text("Current Gamestate: "+self.gameState, font(50), (0,100))
@@ -165,8 +183,9 @@ class Client(StdMain):
 		text("1: Bonjour", font(75), (50, 100))
 		text("2: Direct Connect", font(75), (50, 150))
 		text("3: Change Nick", font(75), (50, 200))
+		text("4: Connect to server", font(75), (50, 250))
 
-		text("Current Nick: "+self.player.name, font(75), (50, 300))
+		text("Current Nick: "+self.player.name, font(75), (50, 400))
 		self.chat.draw()
 	
 	def changeNick_draw(self):
@@ -184,9 +203,22 @@ class Client(StdMain):
 		text("Current IP: "+self.connectTo, font(75), (50, 300))
 		
 	
+	def servers_draw(self):
+		y = 100
+		xa = 100
+		xb = 300
+		for name, ip in self.servers:
+			text(name, font(50), (xa, y))
+			text(ip, font(50), (xb, y))
+			y += 50
+		self.chat.draw()
+	
 	
 	def onKey(self, event):
 		if self.gameState == "mainmenu":
+			if event.key == K_4:
+				self.gameState = "servers"
+				self.servers = ConfigSectionMap("servers").items()
 			if event.key == K_3:
 				self.gameState = "changeNick"
 			if event.key == K_2:
@@ -217,11 +249,8 @@ class Client(StdMain):
 				self.connectTo = self.connectTo[:-1]
 			else:
 				self.connectTo += event.unicode
-		elif self.gameState == "ingame":
-			if False:
-				pass
-			else:
-				self.chat.onKey(event)
+		elif self.gameState == "ingame" or self.gameState == "servers":
+			self.chat.onKey(event)
 
 
 

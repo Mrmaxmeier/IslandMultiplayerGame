@@ -101,8 +101,13 @@ class serverCommandHandlerObj():
 				self.sendToAll("[=] "+sender+" died.")
 	
 		elif cmdBase == "msg":
-			self.sendToPlayer(sender, sender+" --> "+args[0]+": "+args[1])
-			self.sendToPlayer(args[0], sender+" --> "+args[0]+": "+args[1])
+			if args[0] is None: return self.sendToPlayer(sender, "No Player given!")
+			message = " ".join([arg for arg in args[1:] if arg != None])
+			try:
+				self.sendToPlayer(args[0], sender+" --> "+args[0]+": "+message)
+				self.sendToPlayer(sender, sender+" --> "+args[0]+": "+message)
+			except KeyError:
+				self.sendToPlayer(sender, "Player not found: "+args[0])
 	
 		elif cmdBase == "help":
 			self.sendToPlayer(sender, "HELPTEXT\nNEWLINE\nStuff\nTEST")

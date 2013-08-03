@@ -19,7 +19,7 @@ class clientCommandHandlerObj():
 		self.cPlayers = self.cMap.players
 		
 		self.type = "client"
-		self.displayMsg = self.cObj.displayMsg
+		self.displayMsg = self.cObj.chat.receive
 		self.sendToServer = self.cObj.sendToServer
 		
 	
@@ -44,12 +44,12 @@ class clientCommandHandlerObj():
 				self.cMap.seed = args[1]
 				self.cMap.genIslands()
 			elif args[0] == "islandPosition":# seed pos angle
-				self.cSeed2isl[args[1]].body.position = args[2]
-				self.cSeed2isl[args[1]].body.angle = args[3]
+				self.cSeed2isl[args[1]].body.position = (args[2],args[3])
+				self.cSeed2isl[args[1]].body.angle = args[4]
 			elif args[0] == "playerPosision":# name pos angle
 				if not args[1] == self.cObj.player.name:
-					self.cName2Player[args[1]].body.position = args[2]
-					self.cName2Player[args[1]].body.angle = args[3]
+					self.cName2Player[args[1]].body.position = (args[2],args[3])
+					self.cName2Player[args[1]].body.angle = args[4]
 				else:
 					print "got OWN Position"
 			

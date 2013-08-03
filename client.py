@@ -78,13 +78,13 @@ class Client(StdMain):
 	
 	def update(self, dt):
 		self.t += dt
+		if self.gameState == "mainmenu":
+			self.chat.update(dt)
 		if self.gameState == "ingame":
 			self.ingame_update(dt)
 	
 	
 	
-	def displayMsg(self, msg):
-		pass
 	
 	def sendToServer(self, msg):
 		print "sending: "+msg
@@ -105,6 +105,8 @@ class Client(StdMain):
 				self.sendclock.tick(5)
 		except Exception as e:
 			print e
+			self.chat.receive("Error connecting to Server!")
+			self.gameState = "mainmenu"
 	
 	def chandle(self, sock, addr):
 		try:
@@ -162,6 +164,7 @@ class Client(StdMain):
 		text("3: Change Nick", font(75), (50, 200))
 
 		text("Current Nick: "+self.player.name, font(75), (50, 300))
+		self.chat.draw()
 	
 	def changeNick_draw(self):
 		if self.player.name == "":

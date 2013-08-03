@@ -14,7 +14,6 @@ class Server():
 	def __init__(self):
 		self.players = []	#[PlayerObj, PlayerObj...]
 		self.map = Map(time.time())
-		self.map.genIslands()
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
 		self.cmdObj = serverCommandHandlerObj(self)
@@ -23,6 +22,7 @@ class Server():
 		self.socketList = []
 		
 		self.clock = pygame.time.Clock()
+		self.gameclock = pygame.time.Clock()
 		
 		self.running = True
 	
@@ -40,11 +40,26 @@ class Server():
 	
 	
 	def mainloop(self):
+		thread.start_new_thread(self.gamemainloop, ())
 		while self.running:
 			self.clock.tick(5)
 			self.tick()
-
-
+	def gamemainloop(self):
+		self.map.genIslands()
+		while self.running:
+			self.gameclock.tick(30)
+	
+	
+	def newPlayer(self, player):
+		self.sendToPlayer("!serverInformation mapSeed "+str(self.map.seed))
+		for player in self.map.player:
+			angle = player.body.angle
+			pos = player.body.position
+			self.sendToPlayer("!serverInformation playerPosition "+str(pos[0])+" "+str(pos[1])+" "+str(angel))
+	
+	
+	
+	
 	def shandle(self, sock, addr):
 		print "connected to", addr
 		name = sock.recv(1024)

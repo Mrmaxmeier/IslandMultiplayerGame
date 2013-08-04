@@ -136,6 +136,7 @@ class Client(StdMain):
 					if y > 600:
 						player.body.position = (random.randrange(0, 800), 0)
 						player.body.velocity = (0,0)
+						self.sendToServer("!death void")
 				else:
 					print "waiting for response!"
 				

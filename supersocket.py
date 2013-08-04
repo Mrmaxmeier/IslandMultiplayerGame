@@ -15,7 +15,9 @@ class SuperSocket:
 	def recv(self, chsize):
 		try:
 			while not "\0" in self.inBuf:
-				self.inBuf += self.sock.recv(chsize)
+				recvd = self.sock.recv(chsize)
+				if not recvd: return None
+				self.inBuf += recvd
 		except:
 			return None
 		msg, _, self.inBuf = self.inBuf.partition("\0")

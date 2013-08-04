@@ -85,6 +85,11 @@ class clientCommandHandlerObj():
 class serverCommandHandlerObj():
 	def __init__(self, serverObj):
 		self.sObj = serverObj
+		self.sMap = self.sObj.map
+		self.sIslands = self.sMap.islands
+		self.sSeed2isl = self.sMap.islseed2isl
+		self.sName2Player = self.sMap.name2player
+		self.sPlayers = self.sMap.players
 		self.type = "server"
 		self.sendToAll = self.sObj.sendToAll
 		self.sendToPlayer = self.sObj.sendToPlayer
@@ -158,7 +163,22 @@ class serverCommandHandlerObj():
 			except KeyError:
 				self.sendToPlayer(sender, "Player not found: "+args[0])
 	
-	
+		elif cmdBase == "debug":
+			print
+			print
+			print "Parsed !debug from "+sender+", ingame: ", self.sObj.map.name2player[sender]
+			print sender+"'s Socket: ", self.sObj.name2sock[sender].sock
+			print
+			print 'Replying "Got !debug".'
+			self.sendToPlayer(sender, "Got !debug")
+			print
+		
+		
+		elif cmdBase == "stop":
+			print
+			print sender+" stopped the Server."
+			import sys
+			sys.exit()
 	
 		else:
 			self.sendToPlayer(sender, "Could not recognize your Command: !"+cmdBase)

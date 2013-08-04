@@ -65,8 +65,7 @@ class Client(StdMain):
 	def __init__(self):
 		self.map = Map(True)
 		
-		self.player = Player((0,0), self.map.space)
-		self.player.name = Name
+		self.name = Name
 		
 		self.msgToBeSent = []	#["Msg","Msg"...]
 		self.sendclock = pygame.time.Clock()
@@ -122,12 +121,24 @@ class Client(StdMain):
 			sock_raw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			sock_raw.connect(addr)
 			sock = SuperSocket(sock_raw)
+			sock.send(self.name)
 			thread.start_new_thread(self.chandle, (sock, addr))
 			while 1:
-				if self.msgToBeSent:
-					msg = self.msgToBeSent[0]
+				for msg in self.msgToBeSent:
 					sock.send(msg)
-					self.msgToBeSent.remove(msg)
+				self.msgToBeSent = []
+				
+				if self.map.name2player.has_key(self.name):
+					player = self.map.name2player[self.name]
+					x, y = player.body.position
+					vx, vy = player.body.velocity
+					self.sendToServer("!playerPosition %f %f %f %f" % (x, y, vx, vy))
+					if y > 600:
+						player.body.position = (random.randrange(0, 800), 0)
+						player.body.velocity = (0,0)
+				else:
+					print "waiting for response!"
+				
 				self.sendclock.tick(5)
 		except Exception as e:
 			print e
@@ -152,14 +163,10 @@ class Client(StdMain):
 	
 	
 	def ingame_update(self, dt):
-		
-
 		self.map.space.step(dt)
 		self.chat.update(dt)
 		
-		
 		self.gameclock.tick(30)
-		self.player.update(dt)
 	
 	def ingame_draw(self):
 		text("INGAME 2GO", font(50), (50, 200))
@@ -193,18 +200,18 @@ class Client(StdMain):
 		text("3: Change Nick", font(75), (50, 200))
 		text("4: Connect to server", font(75), (50, 250))
 
-		text("Current Nick: "+self.player.name, font(75), (50, 400))
+		text("Current Nick: "+self.name, font(75), (50, 400))
 		self.chat.draw()
 	
 	def changeNick_draw(self):
-		if self.player.name == "":
+		if self.name == "":
 			text("Type to change Nick", font(50), (50, 200))
 		else:
 			text("Press <ENTER> to finish your Name.", font(50), (50, 200))
-		text("Current Nick: "+self.player.name, font(75), (50, 300))
+		text("Current Nick: "+self.name, font(75), (50, 300))
 	
 	def directConnect_draw(self):
-		if self.player.name == "":
+		if self.name == "":
 			text("Type in the IP/Hostname.", font(50), (50, 200))
 		else:
 			text("Press <ENTER> to finish.", font(50), (50, 200))
@@ -236,14 +243,14 @@ class Client(StdMain):
 		elif self.gameState == "changeNick":
 			if event.key == K_RETURN:
 				cfgfile = open("./settings.ini",'w')
-				Config.set('Client','name',self.player.name)
+				Config.set('Client','name',self.name)
 				Config.write(cfgfile)
 				cfgfile.close()
 				self.gameState = "mainmenu"
 			elif event.key == K_BACKSPACE:
-				self.player.name = self.player.name[:-1]
+				self.name = self.name[:-1]
 			else:
-				self.player.name += event.unicode
+				self.name += event.unicode
 		elif self.gameState == "directConnect":
 			if event.key == K_RETURN:
 				cfgfile = open("./settings.ini",'w')

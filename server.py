@@ -41,9 +41,10 @@ class Server():
 				self.unprocessedChat.remove([sender, cmd, timestamp])
 		for player in self.map.players:
 			for otherplayer in self.map.players:
-				angle = otherplayer.body.angle
-				pos = otherplayer.body.position
-				self.sendPlayerPlayerPosition(player.name, otherplayer)
+				if player != otherplayer:
+					angle = otherplayer.body.angle
+					pos = otherplayer.body.position
+					self.sendPlayerPlayerPosition(player.name, otherplayer)
 	
 	def mainloop(self):
 		thread.start_new_thread(self.gamemainloop, ())
@@ -81,18 +82,18 @@ class Server():
 	def gamemainloop(self):
 		self.map.genIslands()
 		while self.running:
-			try:
-				for player in self.map.players:
-					if player.body.position[1] > 600:
-						print "Player Fell"
-						self.unprocessedChat.append([player.name, "!death void", time.time()])
-						player.body.position[1] = 0
-						player.body.position[0] = random.randrange(0, 800)
-						player.body.velocity = (0, 0)
-						self.sendPlayerPlayerPosition(player.name, player)
-			except Exception as e:
-				print e
-				raise
+			#try:
+			#	for player in self.map.players:
+			#		if player.body.position[1] > 600:
+			#			print "Player Fell"
+			#			self.unprocessedChat.append([player.name, "!death void", time.time()])
+			#			player.body.position[1] = 0
+			#			player.body.position[0] = random.randrange(0, 800)
+			#			player.body.velocity = (0, 0)
+			#			self.sendPlayerPlayerPosition(player.name, player)
+			#except Exception as e:
+			#	print e
+			#	raise
 			
 			self.gameclock.tick(30)
 			self.map.space.step(self.gameclock.get_time()/1000.)
@@ -130,6 +131,9 @@ class Server():
 	def shandle(self, sock, addr):
 		print "connected to", addr
 		name = sock.recv(1024)
+		if name == None:
+			print "error after connecting to:", addr
+			return
 		self.sock2name[sock] = name
 		self.name2sock[name] = sock
 		self.unprocessedChat.append([name, "!join", time.time()])
@@ -177,6 +181,6 @@ class Server():
 
 if __name__ == "__main__":
 	server = Server()
-	thread.start_new_thread(server.serve, (PORT, "!serverRequest name",))
+	thread.start_new_thread(server.serve, (PORT, "Hallo!",))
 	
 	server.mainloop()

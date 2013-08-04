@@ -37,9 +37,9 @@ class clientCommandHandlerObj():
 			args.append(None)
 	
 		if cmdBase == "serverRequest":
-			if args[0] == "name":
-				self.sendToServer(self.cObj.player.name)
-			else:
+			#if args[0] == "name":
+			#	self.sendToServer(self.cObj.player.name)
+			#else:
 				pass
 		elif cmdBase == "serverInformation":
 			if args[0] == "mapSeed":
@@ -139,7 +139,10 @@ class serverCommandHandlerObj():
 		elif cmdBase == "playerAction":
 			pass #queue.addAction([sender,args[0]])
 		elif cmdBase == "playerPosition":
-			pass #map.playerlist[sender][pos] = args
+			player = self.sName2Player[sender]
+			x, y, vx, vy = args[:4]
+			player.body.position = float(x), float(y)
+			player.body.velocity = float(vx), float(vy)
 		elif cmdBase == "clientRequest":
 			pass
 		elif cmdBase == "heal":

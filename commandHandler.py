@@ -46,14 +46,16 @@ class clientCommandHandlerObj():
 				self.cMap.seed = float(args[1])
 				self.cMap.genIslands()
 			elif args[0] == "islandPosition":# seed pos angle
-				self.cSeed2isl[args[1]].body.position = (float(args[2]),float(args[3]))
-				self.cSeed2isl[args[1]].body.angle = float(args[4])
-			elif args[0] == "playerPosision":# name pos angle
-				if not args[1] == self.cObj.player.name:
-					self.cName2Player[args[1]].body.position = (float(args[2]),float(args[3]))
-					self.cName2Player[args[1]].body.angle = float(args[4])
-				else:
-					print "got OWN Position"
+				self.cSeed2isl[float(args[1])].body.position = (float(args[2]),float(args[3]))
+				self.cSeed2isl[float(args[1])].body.angle = float(args[4])
+				self.cSeed2isl[float(args[1])].body.velocity = (float(args[5]), float(args[6]))
+			elif args[0] == "playerPosition":# name pos angle
+				self.cName2Player[args[1]].body.position = (float(args[2]),float(args[3]))
+				self.cName2Player[args[1]].body.angle = float(args[4])
+				self.cName2Player[args[1]].body.velocity = (float(args[5]), float(args[6]))
+				#print (args[1]+"'s Position:", 
+					#self.cName2Player[args[1]].body.position)
+
 			elif args[0] == "newPlayer":# name pos angle
 				if not args[1] in self.cPlayers:
 					pos = (float(args[2]),float(args[3]))

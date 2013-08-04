@@ -13,7 +13,7 @@ PORT = 50662
 
 class Server():
 	def __init__(self):
-		self.players = []	#[PlayerObj, PlayerObj...]
+		#self.players = []	#[PlayerObj, PlayerObj...]
 		self.map = Map(False, time.time())
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
@@ -39,7 +39,11 @@ class Server():
 				self.chatLog.append([sender, cmd, timestamp])
 				print str(timestamp)+": "+sender+" -> "+cmd
 				self.unprocessedChat.remove([sender, cmd, timestamp])
-	
+		for player in self.map.players:
+			for otherplayer in self.map.players:
+				angle = otherplayer.body.angle
+				pos = otherplayer.body.position
+				self.sendPlayerPlayerPosition(player.name, otherplayer)
 	
 	def mainloop(self):
 		thread.start_new_thread(self.gamemainloop, ())
@@ -51,10 +55,47 @@ class Server():
 			if self.serversocket != None:
 				self.serversocket.close()
 			print "server closed!"
+	
+	
+	def sendPlayerPlayerPosition(self, recievername, player):
+		pos = player.body.position
+		angle = player.body.angle
+		vel = player.body.velocity
+		self.sendToPlayer(recievername, "!serverInformation playerPosition "
+			+player.name+" "
+			+str(pos[0])+" "+str(pos[1])
+			+" "+str(angle)+" "
+			+str(vel[0])+" "+str(vel[1]))
+	
+	def sendPlayerIslandPosition(self, recievername, island):
+		pos = island.body.position
+		angle = island.body.angle
+		vel = island.body.velocity
+		self.sendToPlayer(recievername, "!serverInformation islandPosition "
+			+str(island.seed)+" "
+			+str(pos[0])+" "+str(pos[1])
+			+" "+str(angle)+" "
+			+str(vel[0])+" "+str(vel[1]))
+		
+	
 	def gamemainloop(self):
 		self.map.genIslands()
 		while self.running:
+			try:
+				for player in self.map.players:
+					if player.body.position[1] > 600:
+						print "Player Fell"
+						self.unprocessedChat.append([player.name, "!death void", time.time()])
+						player.body.position[1] = 0
+						player.body.position[0] = random.randrange(0, 800)
+						player.body.velocity = (0, 0)
+						self.sendPlayerPlayerPosition(player.name, player)
+			except Exception as e:
+				print e
+				raise
+			
 			self.gameclock.tick(30)
+			self.map.space.step(self.gameclock.get_time()/1000.)
 	
 	
 	def newPlayer(self, playername):
@@ -67,11 +108,16 @@ class Server():
 				newplayer.name = playername
 				self.map.players.append(newplayer)
 				self.map.name2player[newplayer.name] = newplayer
+				print self.map.players
+				print "Neuer Spieler erstellt"
+				angle = newplayer.body.angle
+				pos = newplayer.body.position
 				for player in self.map.players:
-					angle = newplayer.body.angle
-					pos = newplayer.body.position
 					self.sendToPlayer(player.name, "!serverInformation newPlayer "+playername+" "+str(pos[0])+" "+str(pos[1])+" "+str(angle))
-					self.sendToPlayer(player.name, "!serverInformation playerPosition "+playername+" "+str(pos[0])+" "+str(pos[1])+" "+str(angle))
+					self.sendPlayerPlayerPosition(player.name, newplayer)
+				for island in self.map.islands:
+					self.sendPlayerIslandPosition(playername, island)
+				print self.map.players
 			else:
 				print "Player already registred."
 		except Exception as e:
@@ -104,7 +150,7 @@ class Server():
 			serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			self.serversocket = serversocket
 			print (socket.gethostname(), port)
-			serversocket.bind((socket.gethostname(), port))
+			serversocket.bind(("0.0.0.0", port))
 			serversocket.listen(5)
 			while 1:
 				print "server ready!"

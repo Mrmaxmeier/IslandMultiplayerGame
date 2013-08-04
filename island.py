@@ -28,11 +28,14 @@ class Map():
 	def genIslands(self):
 		for num in range(10):
 			random.seed(self.seed + num)
-			pos = (random.randrange(50, 100)+num*150, random.randrange(50,500))
+			pos = (random.randrange(50, 100)+num*500, random.randrange(50,500))
 			isl = Island(pos, self.space)
 			isl.seed = self.seed + num
 			self.islseed2isl[isl.seed] = isl
 			self.islands.append(isl)
+		print
+		print "Generated "+str(len(self.islands))+" Islands in total."
+		print
 	
 	def draw(self):
 		for island in self.islands:

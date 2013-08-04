@@ -22,7 +22,8 @@ class Chat:
 		self.y = y
 	
 	def receive(self, message):
-		self.messages.insert(0, Message(message, self.font))
+		if not message.startswith("!"):
+			self.messages.insert(0, Message(message, self.font))
 	
 	def draw(self):
 		y = self.y - self.font.size(self.toSend)[1]

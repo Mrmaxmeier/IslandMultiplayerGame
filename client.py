@@ -139,7 +139,7 @@ class Client(StdMain):
 			print "connected to", addr
 			while 1:
 				msg = sock.recv(1024)
-				if msg:
+				if msg != None:
 					print "received "+msg
 					self.cmdObj.clientIncomingMsg(msg)
 			

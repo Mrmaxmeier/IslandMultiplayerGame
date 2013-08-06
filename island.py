@@ -24,6 +24,7 @@ class Map():
 		if self.clientside:
 			self.dirt = Texture("./assets/textures/dirt.png")
 			self.grass = Texture("./assets/textures/grass_overlay.png")
+			self.rose = Texture("./assets/textures/flower_rose.png")
 	
 	def genIslands(self):
 		for num in range(10):
@@ -45,7 +46,24 @@ class Map():
 	
 
 
-
+class Plant:
+	def __init__(self, island):
+		mx, my = island.middle
+		self.x = random.randrange(mx*2)
+		for (x1, y1), (x2, y2) in zip(island.polyUpper, island.polyUpper[1:]):
+			if x2 > self.x:
+				dx1, dx2 = self.x-x1, x2-x1
+				dy = y2-y1
+				self.slope = dy/float(dx2)
+				self.y = y1 + dy*float(dx1)/dx2
+				break
+	def draw(self, map):
+		tex = self.getTex(map)
+		midx, boty = tex.w/2, tex.h
+		skewed((self.x, self.y), (0, self.slope), scaled, (self.x, self.y), (1, -1), sprite, tex, (self.x-midx, self.y))
+	
+	def getTex(self, map):
+		return map.rose
 
 class Island():
 	def __init__(self, pos, space):
@@ -60,6 +78,7 @@ class Island():
 		x, y = pos
 		joint = pymunk.PivotJoint(self.static_body, self.body, (x, y-0))
 		space.add(joint)
+		self.genPlants()
 	
 	def clearData(self):
 		self.polyUpper = []
@@ -126,7 +145,12 @@ class Island():
 	
 	def draw(self, main):
 		def draw():
+			for plant in self.plants:
+				plant.draw(main)
 			texquads(main.dirt, self.middle, self.polyUpper, self.polyLower)
 			drawGrass(main.grass, 0, 0, -63, 0, self.polyUpper)
 		translated(self.getTranslation(), rotated, self.middle, self.body.angle*180/pi, draw)
+	
+	def genPlants(self):
+		self.plants = [Plant(self) for i in range(5)]
 

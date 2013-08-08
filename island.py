@@ -25,6 +25,11 @@ class Map():
 			self.dirt = Texture("./assets/textures/dirt.png")
 			self.grass = Texture("./assets/textures/grass_overlay.png")
 			self.rose = Texture("./assets/textures/flower_rose.png")
+			self.dandelion = Texture("./assets/textures/flower_dandelion.png")
+			self.carrots = Texture("./assets/textures/carrots_stage.png")
+			self.sapling_birch = Texture("./assets/textures/sapling_birch.png")
+			self.sapling_oak = Texture("./assets/textures/sapling_oak.png")
+
 	
 	def genIslands(self):
 		for num in range(10):
@@ -57,13 +62,25 @@ class Plant:
 				self.slope = dy/float(dx2)
 				self.y = y1 + dy*float(dx1)/dx2
 				break
+		
+		self.texInt = random.randrange(1, 6)
+		
 	def draw(self, map):
 		tex = self.getTex(map)
 		midx, boty = tex.w/2, tex.h
 		skewed((self.x, self.y), (0, self.slope), scaled, (self.x, self.y), (1, -1), sprite, tex, (self.x-midx, self.y))
 	
 	def getTex(self, map):
-		return map.rose
+		if self.texInt == 2:
+			return map.dandelion
+		elif self.texInt == 3:
+			return map.sapling_oak
+		elif self.texInt == 4:
+			return map.sapling_birch
+		elif self.texInt == 5:
+			return map.carrots
+		else:
+			return map.rose
 
 class Island():
 	def __init__(self, pos, space):

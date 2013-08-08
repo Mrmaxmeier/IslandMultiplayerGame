@@ -167,6 +167,8 @@ class Client(StdMain):
 		self.map.space.step(dt)
 		self.chat.update(dt)
 		
+		self.map.update(dt)
+		
 		self.gameclock.tick(30)
 	
 	def ingame_draw(self):

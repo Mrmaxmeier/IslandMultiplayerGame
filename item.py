@@ -1,7 +1,12 @@
+import pymunk
+from draw2d import *
+
 class Item():
-	def __init__(self, type, pos):
+	def __init__(self, type, pos, space):
 		self.type = type
 		
+		self.tex = None
+		self.space = space
 		
 		self.mass = 1
 		self.r = 10
@@ -9,7 +14,7 @@ class Item():
 		self.body = pymunk.Body(self.mass, inertia)
 		self.body.position = pos
 		self.shape = pymunk.Circle(self.body, self.r)
-		space.add(self.body, self.shape)
+		self.space.add(self.body, self.shape)
 	
 	
 	def draw(self):

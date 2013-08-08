@@ -4,6 +4,8 @@ import random
 import pymunk
 import time
 
+from item import *
+
 
 class Map():
 	def __init__(self, clientside, seed = None):
@@ -17,6 +19,11 @@ class Map():
 		
 		self.players = []
 		self.name2player = {} #{Name:Player}
+
+
+		
+		self.items = []
+		
 
 		self.space = pymunk.Space()
 		self.space.gravity = (0, 50)
@@ -48,12 +55,22 @@ class Map():
 			island.draw(self)
 		for player in self.players:
 			player.draw()
+		for item in self.items:
+			item.draw()
+	
+	
+	
+	def update(self, dt):
+		for island in self.islands:
+			for plant in island.plants:
+				plant.update(dt, self)
 	
 
 
 class Plant:
 	def __init__(self, island):
 		mx, my = island.middle
+		self.island = island
 		self.x = random.randrange(mx*2)
 		for (x1, y1), (x2, y2) in zip(island.polyUpper, island.polyUpper[1:]):
 			if x2 > self.x:
@@ -81,6 +98,18 @@ class Plant:
 			return map.carrots
 		else:
 			return map.rose
+	
+	def getPos(self, (dx, dy)):
+		return translate(self.island.getTranslation(), rotate(self.island.middle, self.island.body.angle*180/pi, (self.x+dx, self.y+dy)))
+	
+	def update(self, dt, map):
+		if random.random() < dt / 10:
+			if self.texInt in [4, 5]:
+				itemType = random.choice(["health", "reduceDamage"])
+				itemPos = self.getPos((random.randint(-100, 100), -200))
+				newItem = Item(itemType, itemPos, map.space)
+				map.items.append(newItem)
+	
 
 class Island():
 	def __init__(self, pos, space):
@@ -92,10 +121,10 @@ class Island():
 		self.shapes = self.getShapes()
 		space.add(self.shapes)
 		self.space = space
+		self.plants = self.genPlants()
 		x, y = pos
 		joint = pymunk.PivotJoint(self.static_body, self.body, (x, y-0))
 		space.add(joint)
-		self.genPlants()
 	
 	def clearData(self):
 		self.polyUpper = []
@@ -169,5 +198,5 @@ class Island():
 		translated(self.getTranslation(), rotated, self.middle, self.body.angle*180/pi, draw)
 	
 	def genPlants(self):
-		self.plants = [Plant(self) for i in range(5)]
+		return [Plant(self) for i in range(5)]
 

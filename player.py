@@ -5,7 +5,7 @@ class Player():
 	def __init__(self, pos, space):
 		self.name = "Untitled"
 		self.mass = 1
-		self.r = 10
+		self.r = 17
 		inertia = pymunk.moment_for_circle(self.mass, 0, self.r)
 		self.body = pymunk.Body(self.mass, inertia)
 		self.body.position = pos

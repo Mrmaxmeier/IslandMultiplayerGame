@@ -5,11 +5,12 @@ class Item():
 	def __init__(self, type, pos, space):
 		self.type = type
 		
-		self.tex = None
+		self.tex =  Texture("./assets/textures/apple.png")#None
 		self.space = space
 		
 		self.mass = 1
-		self.r = 10
+		self.scale = 0.75
+		self.r = 32*self.scale
 		inertia = pymunk.moment_for_circle(self.mass, 0, self.r)
 		self.body = pymunk.Body(self.mass, inertia)
 		self.body.position = pos
@@ -19,7 +20,8 @@ class Item():
 	
 	def draw(self):
 		if self.tex:
-			sprite(tex, self.body.position, (self.x, self.y))
+			w, h = self.tex.w, self.tex.h
+			scaled(self.body.position, (self.scale, -self.scale), sprite, self.tex, translate((w/-2., h/-2.), self.body.position))
 		else:
 			circle(blue, self.body.position, self.r)
 	

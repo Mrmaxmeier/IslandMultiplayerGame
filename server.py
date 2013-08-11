@@ -177,10 +177,11 @@ class Server():
 		
 
 
-
-
-if __name__ == "__main__":
+def servermain():
 	server = Server()
 	thread.start_new_thread(server.serve, (PORT, "Hallo!",))
 	
 	server.mainloop()
+
+if __name__ == "__main__":
+	servermain()

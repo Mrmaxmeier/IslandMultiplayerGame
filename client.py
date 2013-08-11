@@ -201,7 +201,8 @@ class Client(StdMain):
 		text("1: Bonjour", font(75), (50, 100))
 		text("2: Direct Connect", font(75), (50, 150))
 		text("3: Change Nick", font(75), (50, 200))
-		text("4: Connect to server", font(75), (50, 250))
+		text("4: Connect to Server", font(75), (50, 250))
+		text("5: Connect to <Local> Server", font(75), (50, 300))
 
 		text("Current Nick: "+self.name, font(75), (50, 400))
 		self.chat.draw()
@@ -234,6 +235,8 @@ class Client(StdMain):
 	
 	def onKey(self, event):
 		if self.gameState == "mainmenu":
+			if event.key == K_5:
+				self.joinlocalhostedServer()
 			if event.key == K_4:
 				self.gameState = "servers"
 				self.servers = ConfigSectionMap("servers").items()
@@ -269,8 +272,21 @@ class Client(StdMain):
 				self.connectTo += event.unicode
 		elif self.gameState == "ingame" or self.gameState == "servers":
 			self.chat.onKey(event)
-
-
+		
+		
+		
+	def hostlocalServer(self):
+		import server
+		server.servermain()
+	
+	
+	def joinlocalhostedServer(self):
+		thread.start_new_thread(self.hostlocalServer, ())
+		time.sleep(2)
+		
+		thread.start_new_thread(self.connectToServer, ("localhost",))
+		
+		self.gameState = "ingame"
 
 
 

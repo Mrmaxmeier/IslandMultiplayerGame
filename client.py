@@ -167,7 +167,7 @@ class Client(StdMain):
 		self.map.space.step(dt)
 		self.chat.update(dt)
 		
-		self.map.update(dt)
+		self.map.update(dt, self.name)
 		
 		self.gameclock.tick(30)
 	

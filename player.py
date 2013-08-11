@@ -1,4 +1,6 @@
 import pymunk
+import pygame
+from pygame.locals import *
 from draw2d import *
 
 class Player():
@@ -21,5 +23,14 @@ class Player():
 	def draw(self):
 		circle(red, self.body.position, self.r)
 	
-	def update(self, dt):
-		pass
+	def update(self, dt, clientname):
+		speed = 200
+		target_vx = 0
+		if self.name == clientname:
+			keys = pygame.key.get_pressed()
+			if keys[K_LEFT]:
+				target_vx -= speed
+			if keys[K_RIGHT]:
+				target_vx += speed
+		vx = self.body.velocity.x
+		self.body.velocity.x = vx + (target_vx-vx)*2*dt

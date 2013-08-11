@@ -60,10 +60,12 @@ class Map():
 	
 	
 	
-	def update(self, dt):
+	def update(self, dt, clientname=None):
 		for island in self.islands:
 			for plant in island.plants:
 				plant.update(dt, self)
+		for player in self.players:
+			player.update(dt, clientname)
 	
 
 

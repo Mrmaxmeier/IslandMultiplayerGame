@@ -17,6 +17,7 @@ class Server():
 		self.map = Map(False, time.time())
 		self.chatLog = []	#[["Sender","Message","Timestamp"]]
 		self.unprocessedChat= []#[["Sender","Message","Timestamp"]]
+		self.socksToDelete = [] #[(sock, name)]
 		self.cmdObj = serverCommandHandlerObj(self)
 		self.sock2name = {}	#{"Sock":"Name"}
 		self.name2sock = {}	#{"Name":"Sock"}
@@ -33,12 +34,17 @@ class Server():
 	
 	
 	def tick(self):
-		if self.unprocessedChat:
-			for sender, cmd, timestamp in self.unprocessedChat:
-				self.cmdObj.serverIncomingMsg(cmd, sender)
-				self.chatLog.append([sender, cmd, timestamp])
-				print str(timestamp)+": "+sender+" -> "+cmd
-				self.unprocessedChat.remove([sender, cmd, timestamp])
+		for sender, cmd, timestamp in self.unprocessedChat:
+			self.cmdObj.serverIncomingMsg(cmd, sender)
+			self.chatLog.append([sender, cmd, timestamp])
+			print "%04.1f: %s -> %s" % (timestamp % 100, sender, cmd)
+		self.unprocessedChat = []
+		for sock, name in self.socksToDelete:
+			self.socketList.remove(sock)
+			self.map.removePlayer(name)
+			del self.sock2name[sock]
+			del self.name2sock[name]
+		self.socksToDelete = []
 		for player in self.map.players:
 			for otherplayer in self.map.players:
 				if player != otherplayer:
@@ -139,14 +145,13 @@ class Server():
 		self.unprocessedChat.append([name, "!join", time.time()])
 		print name+" = "+addr[0]
 		while 1:
-			msg = sock.recv(1024*16)
+			msg = sock.recv(1024) if sock.isAlive else None
 			if msg != None:
 				self.unprocessedChat.append([name, msg, time.time()])
-				print addr, ":", msg
 			else:
 				self.unprocessedChat.append([name, "!leave", time.time()])
 				print addr, "/ '" + name + "' closed!"
-				self.socketList.remove(sock)
+				self.socksToDelete.append((sock, name))
 				return
 
 	def serve(self, port, message):

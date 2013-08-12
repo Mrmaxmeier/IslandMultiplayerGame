@@ -19,12 +19,9 @@ class Map():
 		
 		self.players = []
 		self.name2player = {} #{Name:Player}
-
-
 		
 		self.items = []
 		
-
 		self.space = pymunk.Space()
 		self.space.gravity = (0, 50)
 		
@@ -36,7 +33,6 @@ class Map():
 			self.carrots = Texture("./assets/textures/carrots_stage.png")
 			self.sapling_birch = Texture("./assets/textures/sapling_birch.png")
 			self.sapling_oak = Texture("./assets/textures/sapling_oak.png")
-
 	
 	def genIslands(self):
 		for num in range(10):
@@ -58,8 +54,6 @@ class Map():
 		for item in self.items:
 			item.draw()
 	
-	
-	
 	def update(self, dt, clientname=None):
 		for island in self.islands:
 			for plant in island.plants:
@@ -67,6 +61,12 @@ class Map():
 		for player in self.players:
 			player.update(dt, clientname)
 	
+	def removePlayer(self, name):
+		player = self.name2player[name]
+		del self.name2player[name]
+		self.players.remove(player)
+		player.destroy()
+		print "Player %s removed from map!" % name
 
 
 class Plant:

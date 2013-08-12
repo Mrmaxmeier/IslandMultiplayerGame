@@ -13,7 +13,7 @@ class Player():
 		self.body.position = pos
 		self.shape = pymunk.Circle(self.body, self.r)
 		space.add(self.body, self.shape)
-		
+		self.space = space
 		
 		self.health = 100
 		self.damageTaken = 0
@@ -34,3 +34,6 @@ class Player():
 				target_vx += speed
 		vx = self.body.velocity.x
 		self.body.velocity.x = vx + (target_vx-vx)*2*dt
+	
+	def destroy(self):
+		self.space.remove(self.body, self.shape)

@@ -69,7 +69,7 @@ class Client(StdMain):
 		
 		self.msgToBeSent = []	#["Msg","Msg"...]
 		self.sendclock = pygame.time.Clock()
-		self.gameclock = pygame.time.Clock()
+		self.fps = 0
 		self.gameState = "mainmenu"
 		
 		self.chat = Chat(self.send, font(50), 600)
@@ -166,18 +166,13 @@ class Client(StdMain):
 	def ingame_update(self, dt):
 		self.map.space.step(dt)
 		self.chat.update(dt)
-		
+		self.fps = 1./dt
 		self.map.update(dt, self.name)
-		
-		self.gameclock.tick(30)
 	
 	def ingame_draw(self):
-		text("INGAME 2GO", font(50), (50, 200))
-		self.gameclock.tick(30)
-		
 		self.map.draw()
-		
 		self.chat.draw()
+		text("%d FPS" % self.fps, font(50), (10, 10))
 	
 	
 	def draw(self):
@@ -294,7 +289,7 @@ class Client(StdMain):
 if __name__ == "__main__":
 	#host = raw_input("Connect To Host: ")
 	#playerName = raw_input("Your Name: ")
-	mainloop(((800, 600), "FlyLands", 30), Client)
+	mainloop(((800, 600), "FlyLands", 60), Client)
 	#thread.start_new_thread(client.connectToServer, (host,))
 	
 	#client.mainloop()

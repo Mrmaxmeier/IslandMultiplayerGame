@@ -56,8 +56,14 @@ def text(text, font, pos, col=(255, 255, 255), a=1):
 		scaled, (0, img.get_height()/2), (1, -1),
 			sprite, tex, (0,0), a)
 
+fontcache = {}
 def font(size, file=None):
-	return Font(file, size)
+	key = (size, file)
+	if fontcache.has_key(key):
+		return fontcache[key]
+	font = Font(file, size)
+	fontcache[key] = font
+	return font
 
 def texpoly(tex, (ox, oy), points, a=1):
 	setCol(transparent(a, white))

@@ -1,7 +1,7 @@
 import socket
 import thread
 import pygame
-from supersocket import SuperSocket
+from utils import *
 
 print "Imported Pygame, initing..."
 pygame.init()

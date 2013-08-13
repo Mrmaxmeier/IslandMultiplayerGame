@@ -6,7 +6,7 @@ import time
 from commandHandler import *
 from player import *
 from island import *
-from supersocket import SuperSocket
+from utils import *
 
 PORT = 50662
 

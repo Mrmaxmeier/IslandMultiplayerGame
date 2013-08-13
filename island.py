@@ -5,6 +5,7 @@ import pymunk
 import time
 
 from item import *
+from utils import *
 
 
 class Map():
@@ -22,7 +23,7 @@ class Map():
 		
 		self.items = []
 		
-		self.space = pymunk.Space()
+		self.space = SuperSpace()
 		self.space.gravity = (0, 50)
 		
 		if self.clientside:
@@ -121,7 +122,7 @@ class Island():
 		self.body.position = pos
 		self.newWholePoly()
 		self.shapes = self.getShapes()
-		space.add(self.shapes)
+		space.add(*self.shapes)
 		self.space = space
 		self.plants = self.genPlants()
 		x, y = pos

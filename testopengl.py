@@ -5,13 +5,14 @@ from player import *
 from chatUI import *
 import pymunk
 import random
+from utils import *
 
 class Main(StdMain):
 	def __init__(self):
 		self.dirt = Texture("./assets/textures/dirt.png")
 		self.grass = Texture("./assets/textures/grass_overlay.png")
 		self.rose = Texture("./assets/textures/flower_rose.png")
-		self.space = pymunk.Space()
+		self.space = SuperSpace()
 		self.space.gravity = (0, 50)
 		self.island = Island((400,300), self.space)
 		self.island.rotate(135)

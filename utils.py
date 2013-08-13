@@ -1,4 +1,5 @@
 import socket
+import pymunk
 
 class SuperSocket:
 	def __init__(self, sock):
@@ -25,3 +26,16 @@ class SuperSocket:
 			return None
 		msg, _, self.inBuf = self.inBuf.partition("\0")
 		return msg
+
+class SuperSpace(pymunk.Space):
+	def add(self, *objs):
+		def f(obj):
+			pymunk.Space.add(self, obj)
+		for obj in objs:
+			self.add_post_step_callback(f, obj)
+	
+	def remove(self, *objs):
+		def f(obj):
+			pymunk.Space.remove(self, obj)
+		for obj in objs:
+			self.add_post_step_callback(f, obj)

@@ -6,6 +6,7 @@ import time
 
 from item import *
 from utils import *
+from enemy import *
 
 
 class Map():
@@ -22,6 +23,7 @@ class Map():
 		self.name2player = {} #{Name:Player}
 		
 		self.items = []
+		self.enemys = []
 		
 		self.space = SuperSpace()
 		self.space.gravity = (0, 50)
@@ -54,6 +56,8 @@ class Map():
 			player.draw()
 		for item in self.items:
 			item.draw()
+		for enemy in self.enemys:
+			enemy.draw()
 	
 	def update(self, dt, clientname=None):
 		for island in self.islands:
@@ -61,6 +65,14 @@ class Map():
 				plant.update(dt, self)
 		for player in self.players:
 			player.update(dt, clientname)
+		for enemy in self.enemys:
+			enemy.update(dt)
+		
+		if random.random() < dt / 10:
+			enemyPos = (random.randint(0, 800), 0)
+			newEnemy = Enemy(enemyPos, self)
+			self.enemys.append(newEnemy)
+		
 	
 	def removePlayer(self, name):
 		player = self.name2player[name]

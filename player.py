@@ -13,6 +13,8 @@ class Player():
 		self.body.position = pos
 		self.shape = pymunk.Circle(self.body, self.r)
 		space.add(self.body, self.shape)
+		print
+		print self.body
 		self.space = space
 		
 		self.health = 100
